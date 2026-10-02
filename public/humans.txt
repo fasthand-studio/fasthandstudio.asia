@@ -1,0 +1,29 @@
+/* FASTHAND STUDIO */
+
+  Site:     FastHand Studio
+  URL:      https://fasthandstudio.asia
+  Location: Bangladesh
+  Contact:  https://github.com/FastHand-Studio
+
+/* TEAM */
+
+  Studio:   The people of FastHand Studio
+  GitHub:   https://github.com/FastHand-Studio
+  Writing:  Hand-written, page copy and all
+  Artwork:  The logo was drawn by hand on paper, then traced into SVG
+
+/* TECH */
+
+  Framework:  TanStack Start (React 19, file-based routes, server functions)
+  Styling:    Tailwind CSS v4 with oklch design tokens and CSS corner-shape squircles
+  Build:      Vite 8 + Nitro, deployed to Cloudflare Workers
+  Fonts:      System stack only - no webfont requests, no third-party trackers
+  Analytics:  None
+  AI:         None in the request path. No chat widget, no telemetry, no generated copy.
+
+/* NOTE */
+
+  The admin panels, .env files and SQL dumps some scanners come looking for on
+  this domain are props. They are served as strings, they read nothing back,
+  and they are a small joke at the expense of anyone who expects a website to
+  be made of PHP. See /.well-known/security.txt for the serious version.

@@ -1,0 +1,11 @@
+Contact: https://github.com/FastHand-Studio
+Contact: https://github.com/FastHand-Studio/.github/security/advisories/new
+Acknowledgement: We read every report. We do not pay bounties on a hobby studio site.
+Preferred-Languages: en
+Canonical: https://fasthandstudio.asia/.well-known/security.txt
+Policy: https://github.com/FastHand-Studio
+
+# One honest note: the paths /admin, /.env, /wp-login.php, /backup.sql,
+# /phpinfo.php and friends on this domain are hand-written props served as
+# strings. There is no PHP, no database and no admin panel behind them, so
+# please do not report them as vulnerabilities - but do report anything real.

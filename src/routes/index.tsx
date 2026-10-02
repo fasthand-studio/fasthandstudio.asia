@@ -9,22 +9,35 @@ const reposQuery = queryOptions({
   staleTime: 5 * 60 * 1000,
 });
 
+const ORIGIN = "https://fasthandstudio.asia";
+
 export const Route = createFileRoute("/")({
+  // Title, description and social tags come from the root head. This route only
+  // adds the page-level structured data.
   head: () => ({
-    meta: [
-      { title: "FastHand Studio — the studio behind FastHand" },
+    scripts: [
       {
-        name: "description",
-        content:
-          "FastHand Studio builds the tools, software and open-source work of the FastHand ecosystem, together with a community of developers.",
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "@id": `${ORIGIN}/#webpage`,
+          url: `${ORIGIN}/`,
+          name: "FastHand Studio — the development studio behind the FastHand ecosystem",
+          description:
+            "FastHand Studio writes the tools, software and open-source code of the FastHand ecosystem in public: repositories, docs and a community that contributes back.",
+          isPartOf: { "@id": `${ORIGIN}/#website` },
+          publisher: { "@id": `${ORIGIN}/#organization` },
+          primaryImageOfPage: {
+            "@type": "ImageObject",
+            url: `${ORIGIN}/og.png`,
+            width: 1200,
+            height: 630,
+          },
+          about: { "@id": `${ORIGIN}/#organization` },
+          inLanguage: "en",
+        }),
       },
-      { property: "og:title", content: "FastHand Studio" },
-      {
-        property: "og:description",
-        content: "The development studio behind the FastHand ecosystem.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Index,
@@ -174,11 +187,12 @@ function Focus() {
   );
 }
 
+const parts = ["Products", "Community", "Docs"];
+
 function Ecosystem() {
-  const parts = ["Products", "Community", "Docs", "Studio"];
   return (
     <section className="border-t border-border bg-secondary">
-      <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 py-16 md:grid-cols-2 md:px-8 md:py-24">
+      <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 py-16 md:grid-cols-[1fr_1.2fr] md:px-8 md:py-24">
         <div>
           <h2 className="text-3xl font-semibold tracking-tight">One part of something larger</h2>
           <p className="mt-4 max-w-md text-muted-foreground">
@@ -187,28 +201,68 @@ function Ecosystem() {
           </p>
         </div>
         <div className="surface p-6 md:p-8">
-          <div className="flex items-center justify-between border-b border-border pb-4">
-            <span className="font-semibold">FastHand</span>
-            <span className="text-sm text-muted-foreground">ecosystem</span>
+          <div className="hidden xl:block">
+            <div className="flex justify-center">
+              <EcosystemNode t="FastHand" d="the ecosystem" />
+            </div>
+            <div className="mx-auto h-6 w-px bg-border" />
+            <div className="flex justify-center">
+              <EcosystemNode t="Studio" d="the builders" current />
+            </div>
+            <div className="mx-auto h-7 w-px bg-border" />
+            <div className="flex">
+              {parts.map((p) => (
+                <div key={p} className="tree-branch min-w-0 flex-1 px-1.5">
+                  <EcosystemPart t={p} cls="h-16 items-center justify-center" />
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {parts.map((p) => (
-              <div
-                key={p}
-                className={`flex h-20 items-end p-3 text-[15px] font-semibold ${
-                  p === "Studio"
-                    ? "bg-primary text-primary-foreground"
-                    : "border border-border text-muted-foreground"
-                }`}
-                style={{ borderRadius: 20, cornerShape: "superellipse(1.5)" } as React.CSSProperties}
-              >
-                {p}
-              </div>
-            ))}
+          <div className="xl:hidden">
+            <EcosystemNode t="FastHand" d="the ecosystem" />
+            <div className="ml-[13px] h-6 w-px bg-border" />
+            <EcosystemNode t="Studio" d="the builders" current />
+            <div className="ml-[13px] h-6 w-px bg-border" />
+            <ul>
+              {parts.map((p) => (
+                <li key={p} className="tree-twig py-1.5 pl-8">
+                  <EcosystemPart t={p} cls="h-14 items-center" />
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function EcosystemNode({ t, d, current }: { t: string; d: string; current?: boolean }) {
+  return (
+    <div
+      className={`inline-flex flex-col items-center px-6 py-3 ${
+        current ? "bg-primary text-primary-foreground" : "border border-border bg-card"
+      }`}
+      style={{ borderRadius: 24, cornerShape: "superellipse(1.5)" } as React.CSSProperties}
+    >
+      <span className="text-base font-semibold">{t}</span>
+      <span
+        className={`text-xs ${current ? "text-primary-foreground/60" : "text-muted-foreground"}`}
+      >
+        {d}
+      </span>
+    </div>
+  );
+}
+
+function EcosystemPart({ t, cls }: { t: string; cls: string }) {
+  return (
+    <div
+      className={`flex border border-border p-3 text-[15px] font-semibold text-muted-foreground ${cls}`}
+      style={{ borderRadius: 20, cornerShape: "superellipse(1.5)" } as React.CSSProperties}
+    >
+      {t}
+    </div>
   );
 }
 
