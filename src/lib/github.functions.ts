@@ -25,7 +25,7 @@ export const getRepos = createServerFn({ method: "GET" }).handler(async () => {
   }
   const data = (await res.json()) as any[];
   const repos: Repo[] = data
-    .filter((r) => !r.private && !r.archived)
+    .filter((r) => !r.private && !r.archived && !r.name.startsWith("."))
     .map((r) => ({
       id: r.id,
       name: r.name,
