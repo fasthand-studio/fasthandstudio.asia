@@ -5,7 +5,8 @@ Preferred-Languages: en
 Canonical: https://fasthandstudio.asia/.well-known/security.txt
 Policy: https://github.com/FastHand-Studio
 
-# One honest note: the paths /admin, /.env, /wp-login.php, /backup.sql,
-# /phpinfo.php and friends on this domain are hand-written props served as
-# strings. There is no PHP, no database and no admin panel behind them, so
-# please do not report them as vulnerabilities - but do report anything real.
+# A note on scope: paths here that look like a leaked credential, an admin panel
+# or a database dump are canaries, not findings. They read nothing, return the
+# same bytes to everyone, and reporting one teaches us nothing. Please send the
+# report anyway if the endpoint reflects your input, executes it, or exposes
+# something about a real user - that is the difference we care about.

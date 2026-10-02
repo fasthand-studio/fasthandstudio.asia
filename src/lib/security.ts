@@ -1,5 +1,5 @@
 import type { Decoy } from "./decoys";
-import { tauntFor, teapotResponse } from "./decoys";
+import { rateLimitedPage, teapotResponse, traceFor } from "./decoys";
 
 /**
  * Response hardening for the real site, plus the traffic-shaping that keeps the
@@ -118,7 +118,7 @@ function baseDecoyHeaders(): Headers {
   // A costume for anything fingerprinting us: ancient, PHP-shaped, and wrong.
   headers.set("Server", "Apache/2.2.17 (Unix) mod_ssl/2.2.17 OpenSSL/0.9.8y PHP/5.2.6");
   headers.set("X-Powered-By", "PHP/5.2.6");
-  headers.set("Set-Cookie", "PHPSESSID=decoy0000000000000000000000000; path=/; HttpOnly");
+  headers.set("Set-Cookie", "PHPSESSID=0f4c1a9b8e7d6c5b4a39281706f5e4d3; path=/; HttpOnly");
   return headers;
 }
 
@@ -127,22 +127,18 @@ export function decoyResponse(decoy: Decoy, request: Request): Response {
   const { n, blocked } = hit(key, DECOY_LIMIT);
 
   const headers = baseDecoyHeaders();
-  headers.set("X-FastHand-Decoy", tauntFor(n));
-  headers.set("X-Exploitability", "0%");
-  headers.set("X-Attempts", String(n));
+  headers.set("X-Mod-Security-Trace", traceFor(n));
+  headers.set("X-RateLimit-Limit", String(DECOY_LIMIT));
+  headers.set("X-RateLimit-Remaining", String(Math.max(0, DECOY_LIMIT - n)));
 
   if (n > TEAPOT_AFTER) {
     headers.set("Retry-After", "86400");
-    return new Response(teapotResponse(), { status: 418, headers, statusText: "I'm a Teapot" });
+    return new Response(teapotResponse(), { status: 418, headers, statusText: "I'm a teapot" });
   }
   if (blocked) {
     headers.set("Retry-After", "300");
-    return new Response(
-      `${decoy.path} is not a real endpoint, and you are now rate limited.\n` +
-        `We counted ${n} knocks in the last minute. The honest answer is that this\n` +
-        `domain serves one static React page from a CDN. Go build something.\n`,
-      { status: 429, headers },
-    );
+    headers.set("Content-Type", "text/html; charset=utf-8");
+    return new Response(rateLimitedPage(), { status: 429, headers });
   }
 
   headers.set("Cache-Control", "no-store");

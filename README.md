@@ -53,14 +53,16 @@ are rate limited per address; only a one-way hash of the address is kept, and ne
 Decoy responses are the other job. This is a static React site on a CDN: no PHP, no database, no
 admin panel. Rather than let scanners hit a 404, `src/lib/decoys.ts` answers the well-known paths
 (`/.env`, `/wp-login.php`, `/backup.sql`, `/phpinfo.php`, `/xmlrpc.php`, `/cgi-bin/*`, …) with
-hand-written props — a fake `.env` whose keys are AWS's own documentation examples plus a canary
-string, a fake SQL dump, a fake phpinfo, a fake login form that rejects everything. Every body is a
-static string: nothing is read from the request but the pathname, so nothing can be reflected back.
-Some drip out one line per 150 ms to waste the caller's time, capped at four concurrent streams.
-Persistent knockers get `429`, then `418`.
+hand-written props — a Laravel-shaped `.env` whose keys are AWS's own documentation examples plus a
+canary string, a `mysqldump`, a phpinfo table, an Apache status page, a shell session that goes
+nowhere, and a WordPress login that rejects everything. The props never say what they are: the jokes
+live inside the values, so a scanner spends its time on them instead of moving on. Every body is a
+static string: nothing is read from the request but the pathname and the method, so nothing can be
+reflected back. Some drip out one line per 150 ms to waste the caller's time, capped at four
+concurrent streams. Persistent knockers get `429`, then `418`.
 
-The props are documented in `/.well-known/security.txt` so a genuine researcher does not waste a
-report on them.
+`/.well-known/security.txt` tells a genuine researcher that the credential-shaped paths are canaries,
+so nobody wastes a report on them.
 
 ## Deploy
 

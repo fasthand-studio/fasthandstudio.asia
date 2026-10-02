@@ -23,7 +23,6 @@
 
 /* NOTE */
 
-  The admin panels, .env files and SQL dumps some scanners come looking for on
-  this domain are props. They are served as strings, they read nothing back,
-  and they are a small joke at the expense of anyone who expects a website to
-  be made of PHP. See /.well-known/security.txt for the serious version.
+  If a path on this domain looks like a 2014 CTF challenge, it is one, and the
+  kettle has been on since 2019. Nothing boils. Be nice to whoever is reading
+  the access log - they are having a very good evening.
