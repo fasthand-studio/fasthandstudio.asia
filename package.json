@@ -7,7 +7,7 @@
     "dev": "vite dev",
     "build": "vite build",
     "build:dev": "vite build --mode development",
-    "preview": "nitro preview",
+    "preview": "npx --yes wrangler --cwd ./ dev",
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "vitest run",

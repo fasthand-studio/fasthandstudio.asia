@@ -13,8 +13,15 @@ export default defineConfig(({ command }) => ({
     tanstackStart({ server: { entry: "server" } }),
     // Nitro defaults compatibilityDate to "latest", i.e. the day you built, which
     // makes builds unreproducible and breaks local preview on an older workerd.
+    // Without an explicit name it derives one from the package name and account.
     ...(command === "build"
-      ? [nitro({ preset: "cloudflare-module", compatibilityDate: "2026-01-01" })]
+      ? [
+          nitro({
+            preset: "cloudflare-module",
+            compatibilityDate: "2026-01-01",
+            cloudflare: { wrangler: { name: "fasthand-studio" } },
+          }),
+        ]
       : []),
     viteReact(),
   ],

@@ -12,28 +12,31 @@ the FastHand ecosystem.
 
 ## Development
 
+The lockfile is `bun.lock`, and the deploy pipeline runs `bun install --frozen-lockfile`, so install
+with bun and commit the lockfile whenever `package.json` changes:
+
 ```sh
-npm install --legacy-peer-deps
-npm run dev    # http://localhost:8080
+bun install
+bun run dev    # http://localhost:8080
 ```
 
-The lockfile is `bun.lock`; if you use bun, run `bun install` after pulling so it picks up any
-dependency added here.
+npm works too if you have to (`npm install --legacy-peer-deps` — npm 9's arborist dies on the peer
+set otherwise), but don't let it write a `package-lock.json`.
 
 Set a GitHub token to lift the API quota the repo list depends on (optional, but the shared
 unauthenticated limit is 60 requests/hour):
 
 ```sh
-GITHUB_TOKEN=<fine-grained PAT with public repo metadata read> npm run dev
+GITHUB_TOKEN=<fine-grained PAT with public repo metadata read> bun run dev
 ```
 
-Other scripts: `npm run build`, `npm run preview`, `npm run lint`, `npm test`,
-`npm run share:image`.
+Other scripts: `build`, `preview` (runs the built Worker under wrangler on :8787), `lint`, `test`,
+`share:image`.
 
 ## Share art
 
 `public/logo.svg` and `public/favicon.svg` are hand-drawn. They are the originals — do not
-regenerate or "clean" them. `npm run share:image` rebuilds `public/og.png`,
+regenerate or "clean" them. `bun run share:image` rebuilds `public/og.png`,
 `public/apple-touch-icon.png` and `public/logo-512.png` from them and from the typography in
 `scripts/share-image.svg`.
 
@@ -61,7 +64,8 @@ report on them.
 
 ## Deploy
 
-`npm run build` produces a Cloudflare Workers bundle through Nitro (`npm run preview` runs it under
-wrangler). Change the `nitro({ preset })` entry in `vite.config.ts` for a different host. Define
+`bun run build` produces a Cloudflare Workers bundle through Nitro, registered as the Worker
+`fasthand-studio` with a pinned `compatibility_date` so builds stay reproducible. Pushing to `main`
+deploys it. Change the `nitro({ preset })` entry in `vite.config.ts` for a different host. Define
 `GITHUB_TOKEN` in the target environment's secrets.
 
