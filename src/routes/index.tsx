@@ -75,7 +75,7 @@ function Header() {
     <header className="sticky top-0 z-20 border-b border-border bg-background">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-5 md:px-8">
         <a href="/" className="flex items-center gap-2 font-semibold">
-          <img src="/logo.svg" alt="" width={60} height={40} className="h-10 w-[60px]" />
+          <img src="/logo.svg" alt="" width={45} height={30} className="h-[30px] w-[45px]" />
           FastHand Studio
         </a>
         <nav className="flex items-center gap-1 text-[15px]">
