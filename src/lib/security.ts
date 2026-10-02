@@ -1,5 +1,5 @@
 import type { Decoy } from "./decoys";
-import { rateLimitedPage, teapotResponse, traceFor } from "./decoys";
+import { rateLimitedPage, teapotResponse, traceFor, withAttempts } from "./decoys";
 
 /**
  * Response hardening for the real site, plus the traffic-shaping that keeps the
@@ -133,18 +133,22 @@ export function decoyResponse(decoy: Decoy, request: Request): Response {
 
   if (n > TEAPOT_AFTER) {
     headers.set("Retry-After", "86400");
-    return new Response(teapotResponse(), { status: 418, headers, statusText: "I'm a teapot" });
+    return new Response(teapotResponse(n), {
+      status: 418,
+      headers,
+      statusText: "I'm a teapot",
+    });
   }
   if (blocked) {
     headers.set("Retry-After", "300");
     headers.set("Content-Type", "text/html; charset=utf-8");
-    return new Response(rateLimitedPage(), { status: 429, headers });
+    return new Response(rateLimitedPage(n), { status: 429, headers });
   }
 
   headers.set("Cache-Control", "no-store");
   headers.set("Content-Type", decoy.contentType);
-  const body =
-    decoy.tarpit && tarpits < MAX_CONCURRENT_TARPITS ? tarpitStream(decoy.body) : decoy.body;
+  const text = withAttempts(decoy.dynamic ? decoy.dynamic(n) : decoy.body, n);
+  const body = decoy.tarpit && tarpits < MAX_CONCURRENT_TARPITS ? tarpitStream(text) : text;
   return new Response(body, { status: decoy.status, headers });
 }
 

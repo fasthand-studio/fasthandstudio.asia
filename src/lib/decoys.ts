@@ -1,10 +1,11 @@
 /**
  * Decoy endpoints for the automated scanners that knock on /wp-login.php and /.env.
  *
- * Every body in this file is a static string. Nothing is read from the request
- * except the pathname and the method, so attacker input can never be reflected
- * back into a response. The props are written to look like the real thing: any
- * joke is hidden inside a value, never announced.
+ * Every body in this file is a static string, or a string built from our own
+ * attempt counter. Nothing is read from the request except the pathname and the
+ * method, so attacker input can never be reflected back into a response. The
+ * props are written to look like the real thing: the jokes are in the values and
+ * in the escalation, never in an admission of what this is.
  */
 
 export type DecoyKind = "secrets" | "panel" | "exec";
@@ -15,6 +16,8 @@ export type Decoy = {
   status: number;
   contentType: string;
   body: string;
+  /** Set when the body should escalate with the caller's attempt count. */
+  dynamic?: (attempt: number) => string;
   /** Drip the body out slowly to waste the caller's time. */
   tarpit: boolean;
 };
@@ -237,6 +240,10 @@ PUSHER_CLUSTER=ap1
 
 CANARY=fh-prod-6f2a9c
 MIX_PANEL_USER_ID=
+
+# Operator note: @@N@@ reads of this file, all of them tonight. The SMTP password
+# below has not worked since the mail box was decommissioned, and the canary has
+# already told us your user agent. Be cool. Be cooler.
 `;
 
 const FAKE_WP_CONFIG = `<?php
@@ -277,6 +284,10 @@ if (!defined('ABSPATH')) {
 }
 
 require_once ABSPATH . 'wp-settings.php';
+
+/* Operator note: @@N@@ downloads of this file. The salts were rotated in 2021 and
+   every session they signed expired before you were hired. Cookie theft is a
+   hobby with a very short memory. */
 `;
 
 const FAKE_AWS = `[default]
@@ -295,6 +306,9 @@ aws_access_key_id = AKIAIOSFODNN7EXAMPLE
 aws_secret_access_key = wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 region = us-east-1
 output = json
+
+# @@N@@ reads tonight. The IAM user behind the first block was deleted in 2021.
+# The console let it go gently; it did not listen then either.
 `;
 
 const FAKE_GIT_CONFIG = `[core]
@@ -319,6 +333,8 @@ const FAKE_GIT_CONFIG = `[core]
 	helper = store --file /home/fh_app/.git-credentials
 [http]
 	sslVerify = false
+[operator]
+	note = "@@N@@ clones attempted. The remote is on a network you are not on, and the branch you wanted was never pushed."
 `;
 
 const FAKE_GIT_HEAD = `ref: refs/heads/main
@@ -329,6 +345,7 @@ const FAKE_GIT_REFLOG = `0000000000000000000000000000000000000000 8f2c1a4d9e6b3f
 c1a4d9e6b3f07a5c2d1e8b9f0c3a7d6e51428f22 1e8b9f0c3a7d6e51428f22c1a4d9e6b3f07a5c2d FastHand Deploy Bot <deploy@fasthandstudio.asia> 1759004401 +0600	commit: add backup dir to .gitignore (already deployed)
 1e8b9f0c3a7d6e51428f22c1a4d9e6b3f07a5c2d 3a7d6e51428f22c1a4d9e6b3f07a5c2d1e8b9f0c root <root@ip-10-42-7-19> 1759008801 +0600	reset: moving to HEAD~1
 3a7d6e51428f22c1a4d9e6b3f07a5c2d1e8b9f0c 4d9e6b3f07a5c2d1e8b9f0c3a7d6e51428f22c1a fh_app <fh_app@ip-10-42-7-19> 1759439253 +0600	pull --rebase origin main: fast-forward
+4d9e6b3f07a5c2d1e8b9f0c3a7d6e51428f22c1a 4d9e6b3f07a5c2d1e8b9f0c3a7d6e51428f22c1a deploy <deploy@fasthandstudio.asia> 1759612200 +0600	reset: moving to the commit you keep looking for. @@N@@ reads, no such object.
 `;
 
 const FAKE_GITIGNORE = `/vendor/
@@ -347,6 +364,9 @@ const FAKE_GITIGNORE = `/vendor/
 /.aws/
 # the deploy bot adds its own state here, then forgets to ignore it
 /storage/deploy-token
+/storage/deploy-token.bak
+# @@N@@ reads of this list. If you are here for the token path, it expired, and
+# the bot that minted it was decommissioned with the honors of a small funeral.
 `;
 
 const FAKE_BASH_HISTORY = `ssh-keygen -t ed25519 -C deploy@fasthandstudio.asia
@@ -362,6 +382,9 @@ echo "rotate the keys, then delete the backup directory" >> /home/fh_app/TODO
 tar czf backups/site-$(date +%F).tar.gz public_html/
 history -clear-history
 exit
+# @@N@@ reads of this history. The token on the line about the backup directory
+# was real at the time. It was rotated the next morning by someone who now works
+# at a bank in Dhaka and does not answer emails from scanners.
 `;
 
 const FAKE_ID_RSA = `-----BEGIN OPENSSH PRIVATE KEY-----
@@ -372,6 +395,8 @@ m9yIGEga2V5LCBzbyBoZXJlIGlzIGEgcG9lbSBhYm91dCBhIGtleS4gaXQgb3BlbnMgbm90
 aGluZy4gaXQgaGFzIG5ldmVyIG9wZW5lZCBhbnl0aGluZy4gY2hlY2ttYXRlLg==AAAAB3N
 zaC1yc2EAAAADAAAAAGNoZWNrbWF0ZQ==AAAAC3NzaC1lZDI1NTE5AAAAIABAADEADMAEFAK
 -----END OPENSSH PRIVATE KEY-----
+# Imported @@N@@ times. It has authenticated you to nothing, which is either a bug
+# report or a life lesson depending on how late it is where you are.
 `;
 
 const FAKE_SQL = `-- MySQL dump 10.13  Distrib 5.7.44, for Linux (x86_64)
@@ -421,7 +446,8 @@ INSERT INTO \`secrets\` VALUES ('api_master','revoked-2026-01-19'),('ssh_root','
 
 -- Dump completed on 2026-09-28 03:11:41
 -- mysqldump: — MySQL dump 10.13  Distrib 5.7.44
--- 0 warnings issued. 3 rows exported. Somebody should have checked.
+-- 0 warnings issued. 3 rows exported. @@N@@ downloads since, and the canary in
+-- table \`secrets\` has been read every single one of them. Say hi back.
 `;
 
 const FAKE_PASSWD = `root:x:0:0:root:/root:/bin/bash
@@ -438,6 +464,7 @@ mysql:x:108:112:MySQL Server,,,:/nonexistent:/bin/false
 fh_app:x:1000:1000:FastHand Deploy Bot,,,:/home/fh_app:/bin/bash
 scanner:x:1001:1001::/home/scanner:/usr/sbin/nologin
 nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+# 65534 is nobody. You have been uid=33 for @@N@@ sessions and it has not helped yet.
 `;
 
 const FAKE_LOG = `[02/Oct/2026:20:41:07 +0600] 203.0.113.7 "GET /wp-login.php?action=lostpassword" 404 162 "-" "python-requests/2.31.0"
@@ -456,6 +483,7 @@ const FAKE_LOG = `[02/Oct/2026:20:41:07 +0600] 203.0.113.7 "GET /wp-login.php?ac
 [02/Oct/2026:21:06:33 +0600] 203.0.113.7 "POST /wp-login.php" 429 188 "-" "python-requests/2.31.0"
 [02/Oct/2026:21:07:02 +0600] 203.0.113.7 "POST /wp-login.php" 418 402 "-" "python-requests/2.31.0"
 [02/Oct/2026:21:07:33 +0600] 127.0.0.1 "GET /" 200 18244 "-" "FastHand/1.0 (+https://fasthandstudio.asia)"
+[02/Oct/2026:21:11:07 +0600] 203.0.113.7 "GET /@@N@@-and-counting" 418 402 "-" "python-requests/2.31.0"
 `;
 
 const FAKE_YML = `# fasthand / docker-compose.yml (production overlay)
@@ -488,6 +516,8 @@ services:
 
 volumes:
   var: null
+# @@N@@ reads of this file. The registry above is internal, the password field is a
+# feeling, and the service called regret is the only honest thing in it.
 `;
 
 const FAKE_SWP = `Vim: Swap-File  V2.0 (with magic)
@@ -505,6 +535,8 @@ function fh_sign_request($payload, $key = SELF_KEY) {
 // SELF_KEY was defined in config.php; this file only ever read it.
 // If you are reading this in a browser: config.php is one directory up.
 // It is also one directory up for everyone else, which is the point.
+    recovery attempted @@N@@ times; the rest of the buffer is in a directory you
+    do not have, in a container that was rebuilt without you
 `;
 
 const FAKE_BAK = `<?php
@@ -524,6 +556,9 @@ $table_prefix = 'wp_';
 // TODO(2026): at this point it is part of the furniture.
 
 /* That's all, stop editing! Happy publishing. */
+
+// @@N@@ downloads of a backup of a config that points at a host nobody has
+// telneted to since 2022. The TODO above is the funniest line in this file.
 `;
 
 const FAKE_INDEX = `<!doctype html><html lang="en"><head><meta charset="utf-8">
@@ -542,6 +577,7 @@ th{text-align:left;font:14px monospace;padding-right:1.5em}</style></head><body>
 <tr><td><a href="id_rsa.bak">id_rsa.bak</a></td><td>04-Nov-2019 09:12</td><td>1.7K</td><td>Key</td></tr>
 <tr><td><a href="site-2019-11-04.tar.gz">site-2019-11-04.tar.gz</a></td><td>04-Nov-2019 09:31</td><td>88M</td><td>Archive</td></tr>
 <tr><td><a href="do-not-delete-this-one.zip">do-not-delete-this-one.zip</a></td><td>28-Sep-2026 03:13</td><td>2.1G</td><td>Archive</td></tr>
+<!-- @@N@@ openings of this listing, 0 finished downloads. The 2.1G one is doing a lot of work. -->
 </pre>
 <address>Apache/2.2.17 (Unix) Server at fasthandstudio.asia Port 80</address>
 </body></html>
@@ -651,6 +687,9 @@ Slot Host    Worker Virtual Host                       Client       Request
 This output has been turned off. The server's real-time status is available to
 system administrators only, and you are not listed in the "Authorised" table.
 To enable this report, add "SetHandler server-status" to a location you own.
+
+Requests counted from your address: @@N@@. They are in the scoreboard above, in
+order, with the timestamps you would have expected.
 `;
 
 const FAKE_SHELL = `$ id
@@ -695,7 +734,8 @@ sudo: sorry, you must have a tty to run sudo
 bash-4.3$ logout
 Connection to 10.42.7.19 closed by remote host.
 Connection to 10.42.7.19 closed.
-[+] exit code 0. Nothing happened. Nothing has ever happened here.
+[+] @@N@@ sessions like yours this week. Privilege escalation: successful.
+[+] You are now the proud owner of uid 0 on a drive with nothing on it.
 `;
 
 const FAKE_XMLRPC = `<?xml version="1.0" encoding="UTF-8"?>
@@ -729,6 +769,7 @@ const FAKE_XMLRPC = `<?xml version="1.0" encoding="UTF-8"?>
       </data></array></value>
     </param>
   </params>
+  <!-- @@N@@ multicalls logged. The pingback is closed for the evening. -->
 </methodResponse>
 `;
 
@@ -736,24 +777,115 @@ const FAKE_XMLRPC_POST_ONLY = `XML-RPC server accepts POST requests only.
 `;
 
 const FAKE_GRAPHQL =
-  '{"errors":[{"message":"Cannot query field \\"password\\" on type \\"User\\". Did you mean \\"author\\"?","locations":[{"line":2,"column":3}],"extensions":{"code":"GRAPHQL_VALIDATION_FAILED"}},{"message":"GraphQL introspection is not allowed by this server configuration, but the query contained __schema or __type","extensions":{"code":"INTROSPECTION_DENIED"}}],"data":null}\n';
+  '{"errors":[{"message":"Cannot query field \\"password\\" on type \\"User\\". Did you mean \\"author\\"?","locations":[{"line":2,"column":3}],"extensions":{"code":"GRAPHQL_VALIDATION_FAILED"}},{"message":"GraphQL introspection is not allowed by this server configuration, but the query contained __schema or __type","extensions":{"code":"INTROSPECTION_DENIED"}}],"data":null,"operator_note":"@@N@@ queries from this client. Introspection stays off, and the field you keep guessing is spelled differently in a project you have not found."}\n';
 
-const FAKE_ACTUATOR_ENV = `{"activeProfiles":["prod"],"defaultProfiles":["default"],"propertySources":[{"name":"server.localhost","properties":{}},{"name":"systemProperties","properties":{"java.version":{"value":"1.8.0_202"},"java.home":{"value":"/usr/lib/jvm/java-8-openjdk-amd64/jre"},"os.name":{"value":"Linux"},"user.name":{"value":"fh_app"},"sun.java.command":{"value":"fasthand.jar --spring.config.location=file:/var/www/html/.env"}}},{"name":"systemEnvironment","properties":{"HOME":{"value":"/home/fh_app"},"PATH":{"value":"(/home/fh_app/.local/bin:/usr/local/bin:/usr/bin:/bin)"},"DB_PASSWORD":{"value":"(correct-horse-battery-staple)"},"AWS_SECRET_ACCESS_KEY":{"value":"(wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY)"}}},{"name":"config file (file:/var/www/html/.env)","properties":{"fasthand.canary":{"value":"fh-prod-6f2a9c"}},"propertySourceNames":["prod","common"]}]}`;
+const FAKE_ACTUATOR_ENV = `{"activeProfiles":["prod"],"defaultProfiles":["default"],"propertySources":[{"name":"server.localhost","properties":{}},{"name":"systemProperties","properties":{"java.version":{"value":"1.8.0_202"},"java.home":{"value":"/usr/lib/jvm/java-8-openjdk-amd64/jre"},"os.name":{"value":"Linux"},"user.name":{"value":"fh_app"},"sun.java.command":{"value":"fasthand.jar --spring.config.location=file:/var/www/html/.env"}}},{"name":"systemEnvironment","properties":{"HOME":{"value":"/home/fh_app"},"PATH":{"value":"(/home/fh_app/.local/bin:/usr/local/bin:/usr/bin:/bin)"},"DB_PASSWORD":{"value":"(correct-horse-battery-staple)"},"AWS_SECRET_ACCESS_KEY":{"value":"(wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY)"}}},{"name":"config file (file:/var/www/html/.env)","properties":{"fasthand.canary":{"value":"fh-prod-6f2a9c"}},"propertySourceNames":["prod","common"]}],"operator_note":"@@N@@ reads of /actuator/env. Values in parentheses are masked by policy, and the policy is the joke."}`;
 
-const FAKE_ACTUATOR_HEALTH = `{"status":"UP","components":{"db":{"status":"UP","details":{"database":"MySQL","validationQuery":"isValid()"}},"diskSpace":{"status":"UP","details":{"total":42949672960,"free":1207959470,"threshold":10485760}},"redis":{"status":"UP","details":{"version":"6.2.6"}}}}
+const FAKE_ACTUATOR_HEALTH = `{"status":"UP","components":{"db":{"status":"UP","details":{"database":"MySQL","validationQuery":"isValid()"}},"diskSpace":{"status":"UP","details":{"total":42949672960,"free":1207959470,"threshold":10485760}},"redis":{"status":"UP","details":{"version":"6.2.6"}},"canary":{"status":"UP","details":{"reads":"@@N@@","triggered":"not on your life"}}}}
 `;
 
 const FAKE_ACTUATOR_LINKS = `{"_links":{"self":{"href":"http://fasthandstudio.asia/actuator","templated":false},"health":{"href":"http://fasthandstudio.asia/actuator/health","templated":false},"health-path":{"href":"http://fasthandstudio.asia/actuator/health/{*path}","templated":true},"info":{"href":"http://fasthandstudio.asia/actuator/info","templated":false},"env":{"href":"http://fasthandstudio.asia/actuator/env","templated":false},"beans":{"href":"http://fasthandstudio.asia/actuator/beans","templated":false},"dump":{"href":"http://fasthandstudio.asia/actuator/dump","templated":false},"loggers":{"href":"http://fasthandstudio.asia/actuator/loggers","templated":false}}}`;
 
-const FAKE_TELESCOPE = `{"data":[],"links":{"first":"http://fasthandstudio.asia/telescope?page=1","last":"http://fasthandstudio.asia/telescope?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":null,"last_page":1,"next_page":null,"path":"/telescope","to":null,"total":0},"message":"no monitored entries in the retention window - the last recording is 418 days old and the operator has moved on"}
+const FAKE_TELESCOPE = `{"data":[],"links":{"first":"http://fasthandstudio.asia/telescope?page=1","last":"http://fasthandstudio.asia/telescope?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":null,"last_page":1,"next_page":null,"path":"/telescope","to":null,"total":0},"message":"no monitored entries in the retention window - the last recording is 418 days old and the operator has moved on. @@N@@ polls of an empty batch this hour"}
 `;
 
-function panelHtml(posted: boolean): string {
-  const message = posted
-    ? `<div id="login_error"><strong>Error</strong>: The password you entered for the username <em>admin</em> is incorrect. <a href="#">Lost your password?</a></div>`
-    : "";
-  const locked = posted
-    ? `<p class="lockout">Your form login has been limited for the next <strong>15</strong> minutes. If this was a mistake, contact <a href="mailto:noreply@fasthandstudio.asia">noreply@fasthandstudio.asia</a>.</p>`
+/**
+ * The login form answers every attempt with either a red WordPress error or a
+ * green WordPress "success" box that is not a success. `ok` messages read like a
+ * win at a glance and only reveal the joke in the second sentence.
+ */
+const LOGIN_MESSAGES: Array<{ ok: boolean; text: (n: number) => string }> = [
+  {
+    ok: false,
+    text: () =>
+      `The password you entered for the username <em>admin</em> is incorrect. <a href="#">Lost your password?</a>`,
+  },
+  {
+    ok: true,
+    text: () =>
+      `Welcome back, <em>admin</em>! Redirecting to the dashboard&hellip;<br>Just kidding. That password was wrong, and the redirect was a rumour.`,
+  },
+  {
+    ok: false,
+    text: (n) =>
+      `Attempt ${n}. The username <em>admin</em> does exist. The password is not the one you just tried, and not the next four on your list either.`,
+  },
+  {
+    ok: true,
+    text: (n) =>
+      `Successfully failed. Your attempt number ${n} was processed, logged, ranked, and quietly laughed at by a human.`,
+  },
+  {
+    ok: false,
+    text: () =>
+      `Possible unauthorized access detected. This incident has been reported to the site administrator, who read it, laughed, and went back to work.`,
+  },
+  {
+    ok: true,
+    text: () =>
+      `Login accepted. Session started. Session ended. The reason field was left blank on purpose, and the dashboard you were redirected to is this page.`,
+  },
+  {
+    ok: false,
+    text: () =>
+      `Your account is pending email verification. A message has been sent to <em>admin@fasthandstudio.asia</em>. It is still in the outbox. It will be in the outbox for a while.`,
+  },
+  {
+    ok: true,
+    text: (n) =>
+      `Two-factor authentication passed. That was attempt ${n} of a sequence we have grown fond of. One more step: the password. Not that one. The other one. No.`,
+  },
+  {
+    ok: false,
+    text: (n) =>
+      `Attempt ${n}. This is no longer an attack, it is a subscription. Cancel any time - the form will still be here.`,
+  },
+  {
+    ok: true,
+    text: () =>
+      `Almost in. You are the 418th visitor to try that password. The previous 417 are still waiting for the page to reload. Some of them are family now.`,
+  },
+  {
+    ok: false,
+    text: (n) =>
+      `Attempt ${n} has been printed and framed. It hangs in a hallway you will never see, next to the other ${n - 1}.`,
+  },
+  {
+    ok: true,
+    text: (n) =>
+      `Access granted to everything you already had: this form, this page, and the open knowledge that it is not going to work. Attempt ${n} recorded as <em>enthusiastic</em>.`,
+  },
+];
+
+/**
+ * Payloads carry an `@@N@@` token where the operator wants to name the caller's
+ * attempt count out loud. It is our own counter, never their input.
+ */
+export function withAttempts(text: string, n: number): string {
+  return text.split("@@N@@").join(String(Math.max(1, n)));
+}
+
+/** The longer it goes on, the more personal the box gets. */
+function loginError(n: number): string {
+  const msg = LOGIN_MESSAGES[(n - 1) % LOGIN_MESSAGES.length];
+  const body = msg ? msg.text(n) : "The password you entered is incorrect.";
+  return msg?.ok
+    ? `<div class="updated ok"><strong>Success</strong>: ${body}</div>`
+    : `<div id="login_error"><strong>Error</strong>: ${body}</div>`;
+}
+
+function lockoutNote(n: number): string {
+  if (n <= 6) return "";
+  const minutes = Math.min(15 + (n - 6) * 3, 1440);
+  return `<p class="lockout">Your form login has been limited for the next <strong>${minutes}</strong> minutes. If this was a mistake, contact <a href="mailto:noreply@fasthandstudio.asia">noreply@fasthandstudio.asia</a>. It was not a mistake.</p>`;
+}
+
+function panelHtml(posted: boolean, attempt = 1): string {
+  const n = Math.max(1, attempt);
+  const message = posted ? loginError(n) : "";
+  const locked = posted ? lockoutNote(n) : "";
+  const tally = posted
+    ? `<p class="lockout">Failed attempts from this address: <strong>${n}</strong>. The username field is still <em>admin</em>. So is the password field. Some things never change.</p>`
     : "";
   return `<!doctype html><html lang="en-US"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -775,6 +907,8 @@ body.login div#login h1{margin:0;text-align:center}
 #login form p.message,#login form .field-recovery{margin:0 0 16px}
 .message,div.updated,.press-this-plugin-message,.login .message{background:#fff;border:1px solid #c3c4c7;border-left-width:4px;border-left-color:#2271b1;padding:10px 12px;margin:0 0 16px;font-size:13px;line-height:1.5}
 #login_error,div.error,.login .error,.press-this .notice-error{background:#fff;border:1px solid #d63638;border-left-width:4px;border-left-color:#d63638;padding:12px;margin:0 0 16px;font-size:13px;line-height:1.5;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.updated.ok{background:#ecf9f1;border:1px solid #00a32a;border-left-width:4px;border-left-color:#00a32a;padding:12px;margin:0 0 16px;font-size:13px;line-height:1.5;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.updated.ok strong{color:#00a32a}
 .forgetmenot{display:inline-block}.lockout{font-size:12px;color:#646970;margin:16px 0 0}
 #backtoblog{font-size:13px;margin:24px 0 0;padding:20px 0;text-align:center;color:#646970}
 a{color:#2271b1;text-decoration:underline}
@@ -793,6 +927,7 @@ ${message}
 <input type="hidden" name="testcookie" value="1">
 </form>
 <p id="nav"><a href="#">Lost your password?</a></p>
+${tally}
 ${locked}
 </div>
 <div id="backtoblog"><a href="/">&larr; Go to FastHand Studio</a></div>
@@ -824,6 +959,7 @@ Recommended next steps:
   - drink actual water
   - ship something small today
 
+Attempt count at the time of brewing: @@N@@.
 Retry-After: 86400
 `;
 
@@ -843,8 +979,14 @@ GET /backup/database.sql.gz 200.</p>
 </body></html>
 `;
 
-export function rateLimitedPage(): string {
-  return RATE_LIMITED;
+export function rateLimitedPage(attempt: number): string {
+  return RATE_LIMITED.replace(
+    "<hr>",
+    `<p><strong>Requests counted from this address in the last minute:</strong>
+${attempt}. The limit is 30. You are past it, and the counter does not reset
+because you are serious about this.</p>
+<hr>`,
+  );
 }
 
 const TRACES = [
@@ -959,12 +1101,14 @@ export function buildDecoy(pathname: string, method: string): Decoy {
         tarpit: false,
       };
     }
+    const posted = method === "POST";
     return {
       kind,
       path: pathname,
-      status: method === "POST" ? 401 : 200,
+      status: posted ? 401 : 200,
       contentType: "text/html; charset=utf-8",
-      body: panelHtml(method === "POST"),
+      body: panelHtml(posted),
+      ...(posted ? { dynamic: (n: number) => panelHtml(true, n) } : {}),
       tarpit: false,
     };
   }
@@ -1184,6 +1328,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
   };
 }
 
-export function teapotResponse(): string {
-  return TEAPOT;
+export function teapotResponse(attempt = 1): string {
+  return withAttempts(TEAPOT, attempt);
 }
