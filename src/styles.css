@@ -51,6 +51,11 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-sys-green: var(--sys-green);
+  --color-sys-orange: var(--sys-orange);
+  --color-sys-purple: var(--sys-purple);
+  --color-sys-red: var(--sys-red);
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -62,26 +67,30 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
+  --radius: 16px;
+  --background: oklch(0.982 0.006 85);
+  --foreground: oklch(0.2 0.01 60);
+  --card: oklch(0.995 0.003 85);
+  --card-foreground: oklch(0.2 0.01 60);
+  --popover: oklch(0.995 0.003 85);
+  --popover-foreground: oklch(0.2 0.01 60);
+  --primary: oklch(0.2 0.01 60);
+  --primary-foreground: oklch(0.99 0.004 85);
+  --secondary: oklch(0.94 0.012 85);
+  --secondary-foreground: oklch(0.2 0.01 60);
+  --muted: oklch(0.955 0.008 85);
+  --muted-foreground: oklch(0.52 0.012 60);
+  --accent: oklch(0.55 0.2 255);
+  --accent-foreground: oklch(0.99 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.89 0.01 80);
+  --input: oklch(0.89 0.01 80);
+  --ring: oklch(0.55 0.2 255);
+  --sys-green: oklch(0.65 0.17 150);
+  --sys-orange: oklch(0.72 0.17 60);
+  --sys-purple: oklch(0.55 0.2 300);
+  --sys-red: oklch(0.6 0.22 25);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -140,5 +149,41 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
   }
 }
+
+/* Continuous curvature: radius = H/2 + superellipse(1.5) */
+@utility btn-32 {
+  height: 32px; padding: 0 14px; border-radius: 16px; corner-shape: superellipse(1.5);
+  display: inline-flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; white-space: nowrap;
+  transition: opacity 0.1s;
+  &:hover { opacity: 0.8; }
+  &:focus-visible { outline: 2px solid var(--color-ring); outline-offset: 2px; }
+}
+@utility btn-44 {
+  height: 44px; padding: 0 22px; border-radius: 22px; corner-shape: superellipse(1.5);
+  display: inline-flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 600; white-space: nowrap;
+  transition: opacity 0.1s;
+  &:hover { opacity: 0.85; }
+  &:focus-visible { outline: 2px solid var(--color-ring); outline-offset: 2px; }
+}
+@utility surface {
+  background: var(--color-card); border: 1px solid var(--color-border);
+  border-radius: 24px; corner-shape: superellipse(1.5);
+}
+@utility grain {
+  background-image: radial-gradient(oklch(0.2 0 0 / 0.18) 0.6px, transparent 0.6px), linear-gradient(135deg, var(--color-accent), var(--color-sys-purple));
+  background-size: 3px 3px, 100% 100%;
+}
+
+/* CSS 3D scene: stacked studio layers */
+.scene { perspective: 1400px; }
+.stack { transform-style: preserve-3d; transform: rotateX(58deg) rotateZ(-38deg); animation: drift 24s linear infinite; }
+.plate { position: absolute; inset: 0; transform-style: preserve-3d; border: 1px solid var(--color-border);
+  background: oklch(0.995 0.003 85 / 0.82); border-radius: 48px; corner-shape: superellipse(1.5); }
+.plate.ink { background: var(--color-foreground); border-color: var(--color-foreground); }
+@keyframes drift { to { transform: rotateX(58deg) rotateZ(322deg); } }
+@media (prefers-reduced-motion: reduce) { .stack { animation: none; } }
