@@ -75,7 +75,7 @@ function Header() {
     <header className="sticky top-0 z-20 border-b border-border bg-background">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-5 md:px-8">
         <a href="/" className="flex items-center gap-2 font-semibold">
-          <span className="grain inline-block size-5 rounded-[10px]" style={{ cornerShape: "superellipse(1.5)" } as React.CSSProperties} />
+          <img src="/favicon.svg" alt="" width={24} height={24} className="size-6 rounded-[12px]" style={{ cornerShape: "superellipse(1.5)" } as React.CSSProperties} />
           FastHand Studio
         </a>
         <nav className="flex items-center gap-1 text-[15px]">
