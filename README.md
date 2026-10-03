@@ -64,6 +64,18 @@ concurrent streams. Persistent knockers get `429`, then `418`.
 `/.well-known/security.txt` tells a genuine researcher that the credential-shaped paths are canaries,
 so nobody wastes a report on them.
 
+## Canonical URLs
+
+`https://fasthandstudio.asia` is the only canonical origin. `src/lib/canonical.ts` runs first in the
+request pipeline and 301s anything else on that host back to it — `www.` to the apex, plain HTTP to
+HTTPS — so the four variants are one site to a crawler instead of four copies of it. Other hosts
+(`localhost`, preview deployments, the `workers.dev` address) are untouched.
+
+Two things on the Cloudflare side keep this honest: the zone's SSL/TLS mode must not be `Flexible`
+(an HTTP-looking request would then loop the redirect forever), and both `fasthandstudio.asia` and
+`www.fasthandstudio.asia` stay bound to the Worker — the redirect is what makes `www.` a free alias
+rather than a second copy of the site.
+
 ## Deploy
 
 `bun run build` produces a Cloudflare Workers bundle through Nitro, registered as the Worker

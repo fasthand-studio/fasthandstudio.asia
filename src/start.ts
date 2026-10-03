@@ -1,6 +1,7 @@
 import { createStart, createCsrfMiddleware, createMiddleware } from "@tanstack/react-start";
 
 import { buildDecoy, classify } from "./lib/decoys";
+import { canonicalRedirect } from "./lib/canonical";
 import {
   decoyResponse,
   hardenResponse,
@@ -24,6 +25,9 @@ const guardMiddleware = createMiddleware().server(async ({ request, handlerType,
   if (request.method !== "GET" && request.method !== "HEAD" && oversized(request)) {
     return new Response("Request entity too large.\n", { status: 413 });
   }
+
+  const moved = canonicalRedirect(request, url);
+  if (moved) return moved;
 
   if (classify(url.pathname)) {
     console.warn(`[decoy] ${request.method} ${url.pathname}`);
