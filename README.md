@@ -19,7 +19,6 @@ with bun and commit the lockfile whenever `package.json` changes:
 bun install
 bun run dev    # http://localhost:8080
 ```
-
 npm works too if you have to (`npm install --legacy-peer-deps` — npm 9's arborist dies on the peer
 set otherwise), but don't let it write a `package-lock.json`.
 
