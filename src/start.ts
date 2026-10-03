@@ -3,11 +3,13 @@ import { createStart, createCsrfMiddleware, createMiddleware } from "@tanstack/r
 import { buildDecoy, classify } from "./lib/decoys";
 import { canonicalRedirect } from "./lib/canonical";
 import {
+  blockedResponse,
   decoyResponse,
   hardenResponse,
   malformed,
   oversized,
   tooManyServerFns,
+  tooMuchFromThisAddress,
 } from "./lib/security";
 import { renderErrorPage } from "./lib/error-page";
 
@@ -15,6 +17,10 @@ import { renderErrorPage } from "./lib/error-page";
 // else leaves this middleware with hardened headers.
 const guardMiddleware = createMiddleware().server(async ({ request, handlerType, next }) => {
   const url = new URL(request.url);
+
+  // First, because it is the only check here that has to cover a looping or
+  // flooding address before it spends anything else.
+  if (tooMuchFromThisAddress(request)) return blockedResponse();
 
   if (malformed(url)) {
     return new Response("Malformed request.\n", {

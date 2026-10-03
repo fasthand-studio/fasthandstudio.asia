@@ -18,8 +18,6 @@ export type Decoy = {
   body: string;
   /** Set when the body should escalate with the caller's attempt count. */
   dynamic?: (attempt: number) => string;
-  /** Drip the body out slowly to waste the caller's time. */
-  tarpit: boolean;
 };
 
 const SECRET_EXACT = new Set([
@@ -935,60 +933,6 @@ ${locked}
 </body></html>`;
 }
 
-const TEAPOT = `            _.._
-         .-'   _  '-.
-        /     .-'    /|
-       |     /      / |
-       |    |      /  /
-        \\   |     /  /
-         '-.|    '--'
-            ''  '-.'
-
-  418 I'm a teapot
-
-The requested resource refused to brew coffee because it is, permanently, a
-teapot. Your tool asked for /wp-login.php; the pot answered, and keeps
-answering, and will answer again tomorrow.
-
-Status: the kettle has been on since 2019. Nothing boils. The tea is decaf.
-Escalation: not available on this vhost. A pot does not escalate; it steeps.
-Ask nicely and it may answer again, in the same voice, forever.
-
-Recommended next steps:
-  - close the terminal
-  - drink actual water
-  - ship something small today
-
-Attempt count at the time of brewing: @@N@@.
-Retry-After: 86400
-`;
-
-const RATE_LIMITED = `<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
-<html><head><title>429 Too Many Requests</title>
-<meta name="robots" content="noindex,nofollow"></head><body>
-<h1>Too Many Requests</h1>
-<p>The server is temporarily unable to service your request due to the uptime
-limit being reached. Please lower your request rate; a human reviewing the
-access log has been notified, and the limits on this vhost are set by that
-human, who is currently enjoying the log.</p>
-<p>Your recent requests, for reference:<br>
-GET /wp-login.php 401, POST /xmlrpc.php 200, GET /.env 200,
-GET /backup/database.sql.gz 200.</p>
-<hr>
-<address>Apache/2.2.17 (Unix) Server at fasthandstudio.asia Port 80</address>
-</body></html>
-`;
-
-export function rateLimitedPage(attempt: number): string {
-  return RATE_LIMITED.replace(
-    "<hr>",
-    `<p><strong>Requests counted from this address in the last minute:</strong>
-${attempt}. The limit is 30. You are past it, and the counter does not reset
-because you are serious about this.</p>
-<hr>`,
-  );
-}
-
 const TRACES = [
   "mod_evasive: rule 942100, phase 2, verdict=deferred",
   "mod_security: anomaly score 12, threshold 5, action=continue",
@@ -1013,7 +957,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
         status: method === "GET" ? 400 : 200,
         contentType: "application/json",
         body: FAKE_GRAPHQL,
-        tarpit: false,
       };
     }
     if (pathname.startsWith("/telescope") || pathname.startsWith("/_debugbar")) {
@@ -1023,7 +966,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
         status: 200,
         contentType: "application/json",
         body: FAKE_TELESCOPE,
-        tarpit: false,
       };
     }
     if (pathname === "/server-status" || pathname === "/server-info") {
@@ -1033,7 +975,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
         status: 200,
         contentType: "text/plain; charset=utf-8",
         body: FAKE_SERVER_STATUS,
-        tarpit: true,
       };
     }
     if (
@@ -1047,7 +988,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
         status: 200,
         contentType: "text/html; charset=utf-8",
         body: fakePhpinfo(),
-        tarpit: true,
       };
     }
     return {
@@ -1056,7 +996,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
       status: 200,
       contentType: "text/plain; charset=utf-8",
       body: FAKE_SHELL,
-      tarpit: true,
     };
   }
 
@@ -1068,7 +1007,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
         status: method === "POST" ? 200 : 405,
         contentType: method === "POST" ? "text/xml; charset=UTF-8" : "text/html; charset=UTF-8",
         body: method === "POST" ? FAKE_XMLRPC : FAKE_XMLRPC_POST_ONLY,
-        tarpit: true,
       };
     }
     if (pathname === "/actuator/env") {
@@ -1078,7 +1016,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
         status: 200,
         contentType: "application/json",
         body: FAKE_ACTUATOR_ENV,
-        tarpit: true,
       };
     }
     if (pathname === "/actuator/health") {
@@ -1088,7 +1025,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
         status: 200,
         contentType: "application/json",
         body: FAKE_ACTUATOR_HEALTH,
-        tarpit: false,
       };
     }
     if (pathname === "/actuator") {
@@ -1098,7 +1034,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
         status: 200,
         contentType: "application/json",
         body: FAKE_ACTUATOR_LINKS,
-        tarpit: false,
       };
     }
     const posted = method === "POST";
@@ -1109,7 +1044,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
       contentType: "text/html; charset=utf-8",
       body: panelHtml(posted),
       ...(posted ? { dynamic: (n: number) => panelHtml(true, n) } : {}),
-      tarpit: false,
     };
   }
 
@@ -1121,7 +1055,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
       status: 200,
       contentType: "text/plain; charset=utf-8",
       body: FAKE_GIT_HEAD,
-      tarpit: false,
     };
   }
   if (pathname.startsWith("/.git/logs")) {
@@ -1131,7 +1064,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
       status: 200,
       contentType: "text/plain; charset=utf-8",
       body: FAKE_GIT_REFLOG,
-      tarpit: true,
     };
   }
   if (pathname.startsWith("/.git/")) {
@@ -1141,7 +1073,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
       status: 200,
       contentType: "text/plain; charset=utf-8",
       body: FAKE_GIT_CONFIG,
-      tarpit: false,
     };
   }
   if (pathname.startsWith("/.aws/")) {
@@ -1151,7 +1082,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
       status: 200,
       contentType: "text/plain; charset=utf-8",
       body: FAKE_AWS,
-      tarpit: true,
     };
   }
   if (
@@ -1165,7 +1095,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
       status: 200,
       contentType: "text/plain; charset=utf-8",
       body: FAKE_PASSWD,
-      tarpit: true,
     };
   }
   if (
@@ -1181,7 +1110,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
       status: 200,
       contentType: "application/x-pem-file",
       body: FAKE_ID_RSA,
-      tarpit: true,
     };
   }
   if (pathname.endsWith(".sql") || pathname.endsWith(".sql.gz") || pathname.endsWith(".sqlite")) {
@@ -1191,7 +1119,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
       status: 200,
       contentType: "application/sql",
       body: FAKE_SQL,
-      tarpit: true,
     };
   }
   if (pathname.endsWith(".log")) {
@@ -1201,7 +1128,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
       status: 200,
       contentType: "text/plain; charset=utf-8",
       body: FAKE_LOG,
-      tarpit: true,
     };
   }
   if (
@@ -1216,7 +1142,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
       status: 200,
       contentType: "text/plain; charset=utf-8",
       body: FAKE_YML,
-      tarpit: true,
     };
   }
   if (pathname.endsWith(".swp") || pathname.endsWith(".save")) {
@@ -1226,7 +1151,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
       status: 200,
       contentType: "application/octet-stream",
       body: FAKE_SWP,
-      tarpit: true,
     };
   }
   if (pathname.endsWith(".bak") || pathname.endsWith(".old")) {
@@ -1236,7 +1160,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
       status: 200,
       contentType: "text/plain; charset=utf-8",
       body: FAKE_BAK,
-      tarpit: true,
     };
   }
   if (
@@ -1251,7 +1174,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
       status: 200,
       contentType: "text/html; charset=utf-8",
       body: FAKE_INDEX,
-      tarpit: true,
     };
   }
   if (pathname.endsWith(".zip") || pathname.endsWith(".tar.gz") || pathname.endsWith(".7z")) {
@@ -1261,7 +1183,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
       status: 200,
       contentType: "text/html; charset=utf-8",
       body: FAKE_INDEX,
-      tarpit: true,
     };
   }
   if (pathname.endsWith(".php")) {
@@ -1271,7 +1192,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
       status: 200,
       contentType: "text/plain; charset=utf-8",
       body: FAKE_WP_CONFIG,
-      tarpit: true,
     };
   }
   if (pathname === "/.git-credentials") {
@@ -1281,7 +1201,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
       status: 200,
       contentType: "text/plain; charset=utf-8",
       body: "https://deploy-bot:hunter2@git.example.invalid\nhttps://fh_ci:%70%61%73%73%77%6f%72%64@10.42.7.19:2222\n",
-      tarpit: true,
     };
   }
   if (pathname === "/.gitignore") {
@@ -1291,7 +1210,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
       status: 200,
       contentType: "text/plain; charset=utf-8",
       body: FAKE_GITIGNORE,
-      tarpit: false,
     };
   }
   if (pathname.startsWith("/.git/refs/") || pathname === "/.DS_Store") {
@@ -1305,7 +1223,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
       body: pathname.startsWith("/.git/")
         ? "4d9e6b3f07a5c2d1e8b9f0c3a7d6e51428f22c1a\n"
         : FAKE_INDEX,
-      tarpit: false,
     };
   }
   if (pathname === "/.bash_history") {
@@ -1315,7 +1232,6 @@ export function buildDecoy(pathname: string, method: string): Decoy {
       status: 200,
       contentType: "text/plain; charset=utf-8",
       body: FAKE_BASH_HISTORY,
-      tarpit: true,
     };
   }
   return {
@@ -1324,10 +1240,5 @@ export function buildDecoy(pathname: string, method: string): Decoy {
     status: 200,
     contentType: "text/plain; charset=utf-8",
     body: FAKE_ENV,
-    tarpit: true,
   };
-}
-
-export function teapotResponse(attempt = 1): string {
-  return withAttempts(TEAPOT, attempt);
 }

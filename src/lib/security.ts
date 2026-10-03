@@ -1,23 +1,33 @@
 import type { Decoy } from "./decoys";
-import { rateLimitedPage, teapotResponse, traceFor, withAttempts } from "./decoys";
+import { traceFor, withAttempts } from "./decoys";
 
 /**
  * Response hardening for the real site, plus the traffic-shaping that keeps the
  * decoys in src/lib/decoys.ts from becoming a denial-of-service against us.
+ *
+ * This is a backstop, not the wall. Every request that reaches this file has
+ * already been counted against the Worker's daily request budget, so the limit
+ * that actually protects the site is the rate-limiting rule on the Cloudflare
+ * zone — see README. Nothing here should be trusted to keep the lights on.
  */
 
 const WINDOW_MS = 60_000;
 const DECOY_LIMIT = 30;
-const TEAPOT_AFTER = 60;
+const BLOCK_SECONDS = 86_400;
 const SERVER_FN_LIMIT = 120;
 const MAX_PATH_LEN = 1024;
 const MAX_BODY_BYTES = 16 * 1024;
-const MAX_CONCURRENT_TARPITS = 4;
+/**
+ * Ceiling for everything an address asks the Worker for in a minute, not just
+ * the decoy paths. Static assets are served before the Worker runs, so a real
+ * visitor — even one sharing an exit address with an office — stays well under
+ * this; a poller does not.
+ */
+const ADDRESS_LIMIT = 120;
 
 const IP_SALT = "fasthand-studio-decoy-v1:";
 
 const buckets = new Map<string, { n: number; at: number }>();
-let tarpits = 0;
 
 /** A one-way hash so the counter never retains a raw address. */
 export function ipKey(request: Request, namespace: string): string {
@@ -48,6 +58,11 @@ function hit(key: string, limit: number): { n: number; blocked: boolean } {
 
 export function tooManyServerFns(request: Request): boolean {
   return hit(ipKey(request, "sf"), SERVER_FN_LIMIT).blocked;
+}
+
+/** The one limit here that covers the whole site, not only the decoy paths. */
+export function tooMuchFromThisAddress(request: Request): boolean {
+  return hit(ipKey(request, "addr"), ADDRESS_LIMIT).blocked;
 }
 
 export function csp(host: string): string {
@@ -126,61 +141,33 @@ export function decoyResponse(decoy: Decoy, request: Request): Response {
   const key = ipKey(request, "decoy");
   const { n, blocked } = hit(key, DECOY_LIMIT);
 
+  // Past the allowance the address is finished with. A costume at this point is
+  // a reward: it says the path is still worth knocking on.
+  if (blocked) return blockedResponse();
+
   const headers = baseDecoyHeaders();
   headers.set("X-Mod-Security-Trace", traceFor(n));
   headers.set("X-RateLimit-Limit", String(DECOY_LIMIT));
   headers.set("X-RateLimit-Remaining", String(Math.max(0, DECOY_LIMIT - n)));
-
-  if (n > TEAPOT_AFTER) {
-    headers.set("Retry-After", "86400");
-    return new Response(teapotResponse(n), {
-      status: 418,
-      headers,
-      statusText: "I'm a teapot",
-    });
-  }
-  if (blocked) {
-    headers.set("Retry-After", "300");
-    headers.set("Content-Type", "text/html; charset=utf-8");
-    return new Response(rateLimitedPage(n), { status: 429, headers });
-  }
-
   headers.set("Cache-Control", "no-store");
   headers.set("Content-Type", decoy.contentType);
+
   const text = withAttempts(decoy.dynamic ? decoy.dynamic(n) : decoy.body, n);
-  const body = decoy.tarpit && tarpits < MAX_CONCURRENT_TARPITS ? tarpitStream(text) : text;
-  return new Response(body, { status: decoy.status, headers });
+  return new Response(text, { status: decoy.status, headers });
 }
 
-/** One line every 150ms: their client waits, our worker does nothing. */
-function tarpitStream(text: string): ReadableStream<Uint8Array> {
-  const encoder = new TextEncoder();
-  const lines = text.split(/(?<=\n)/g);
-  let i = 0;
-  let spent = false;
-  tarpits += 1;
-  const release = () => {
-    if (!spent) {
-      spent = true;
-      tarpits -= 1;
-    }
-  };
-  return new ReadableStream<Uint8Array>({
-    pull(controller) {
-      return new Promise<void>((resolve) => {
-        setTimeout(() => {
-          if (i < lines.length) {
-            controller.enqueue(encoder.encode(lines[i++]));
-          } else {
-            release();
-            controller.close();
-          }
-          resolve();
-        }, 150);
-      });
-    },
-    cancel() {
-      release();
+/**
+ * The terminal answer for an address that has outstayed its welcome. Plain,
+ * uncostumed, and long — the opposite of an invitation.
+ */
+export function blockedResponse(): Response {
+  return new Response("Forbidden.\n", {
+    status: 403,
+    headers: {
+      "content-type": "text/plain; charset=utf-8",
+      "cache-control": "no-store",
+      "retry-after": String(BLOCK_SECONDS),
+      "x-robots-tag": "noindex, nofollow",
     },
   });
 }

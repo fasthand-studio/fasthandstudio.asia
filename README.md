@@ -46,8 +46,10 @@ regenerate or "clean" them. `bun run share:image` rebuilds `public/og.png`,
 Real responses get hardened headers: a CSP (`default-src 'self'`, inline styles and hydration
 scripts allowed, no third-party origins), `nosniff`, `Referrer-Policy`, `frame-ancestors 'none'`,
 a `Permissions-Policy` that denies every device capability, COOP, and a `security.txt` Link header.
-Fingerprint-leaking headers (`Server`, `X-Powered-By`) are stripped. Server functions and decoy hits
-are rate limited per address; only a one-way hash of the address is kept, and never logged.
+Fingerprint-leaking headers (`Server`, `X-Powered-By`) are stripped. Every request is counted per
+address — 120 a minute across the whole Worker before a bare `403` — and the decoy paths and server
+functions have their own tighter budgets; only a one-way hash of the address is kept, and never
+logged.
 
 Decoy responses are the other job. This is a static React site on a CDN: no PHP, no database, no
 admin panel. Rather than let scanners hit a 404, `src/lib/decoys.ts` answers the well-known paths
@@ -57,11 +59,34 @@ canary string, a `mysqldump`, a phpinfo table, an Apache status page, a shell se
 nowhere, and a WordPress login that rejects everything. The props never say what they are: the jokes
 live inside the values, so a scanner spends its time on them instead of moving on. Every body is a
 static string: nothing is read from the request but the pathname and the method, so nothing can be
-reflected back. Some drip out one line per 150 ms to waste the caller's time, capped at four
-concurrent streams. Persistent knockers get `429`, then `418`.
+reflected back. An address that takes more than 30 of these in a minute is finished with: it gets a
+bare `403` with `Retry-After: 86400` and no costume headers, because a fake Apache banner at that
+point is an invitation rather than an answer. Nothing streams — a slow body holds a Worker slot open
+and buys nothing.
 
 `/.well-known/security.txt` tells a genuine researcher that the credential-shaped paths are canaries,
 so nobody wastes a report on them.
+
+## Limits that actually hold
+
+The middleware above is a backstop, not the wall. On Cloudflare, a request is counted against the
+Worker's daily budget the moment it is handed over, so no code in this repository can refuse one for
+free. The budget is what took the site down once: the free Workers plan is 100,000 requests a day,
+one address spent the whole allowance, and every visitor after that got Error 1027 — the block is
+Cloudflare's, applied to everyone, and it clears at the next UTC day boundary.
+
+So the limits that matter live on the zone, where a rejection never reaches the Worker:
+
+- **One rate-limiting rule** (the free plan allows exactly one): *all requests, per Source IP, more
+  than 60 a minute → Block, 1 hour*. This is the limiter that actually blocks.
+- **IP Access Rules** for a named offender: Security → Events → the event → Block IP. Free, and it
+  stops them at the edge rather than at the Worker.
+- **Under Attack mode** is the panic button. It challenges every visitor, so turn it on during a
+  flood and off afterwards, not as a default.
+
+Two facts worth keeping in mind when changing this: requests served by the Workers asset layer are
+free and unlimited, while responses cached by the Worker are still billed per request — so caching
+the HTML saves nothing, and anything that can be a built file should be one.
 
 ## Canonical URLs
 

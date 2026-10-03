@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { buildDecoy, rateLimitedPage, teapotResponse, withAttempts } from "./decoys";
+import { buildDecoy, withAttempts } from "./decoys";
 import { classify } from "./decoys";
+import { decoyResponse, tooMuchFromThisAddress } from "./security";
 
 const PATHS = [
   "/.env",
@@ -71,10 +72,34 @@ describe("decoy taunts", () => {
     expect([...seen].sort()).toEqual(["green", "red"]);
   });
 
-  it("escapes into 429 and 418 with counts", () => {
-    expect(rateLimitedPage(44)).toContain("44. The limit is 30");
-    expect(teapotResponse(61)).toContain("61");
-    expect(teapotResponse(61)).not.toContain("@@N@@");
-    expect(teapotResponse()).not.toContain("@@N@@");
+  it("ends the conversation with a plain 403 once the allowance is spent", async () => {
+    const request = new Request("https://fasthandstudio.asia/.env", {
+      headers: { "cf-connecting-ip": "203.0.113.77" },
+    });
+    const decoy = buildDecoy("/.env", "GET");
+    let last = decoyResponse(decoy, request);
+    expect(last.status).toBe(decoy.status);
+    for (let i = 0; i < 40; i += 1) last = decoyResponse(decoy, request);
+
+    expect(last.status).toBe(403);
+    expect(last.headers.get("retry-after")).toBe("86400");
+    // The Apache costume goes away with the block: nothing left to encourage.
+    expect(last.headers.get("server")).toBeNull();
+    expect(last.headers.get("x-powered-by")).toBeNull();
+    expect(await last.text()).toBe("Forbidden.\n");
+  });
+
+  it("blocks an address that floods the Worker, not just the decoy paths", () => {
+    const request = new Request("https://fasthandstudio.asia/", {
+      headers: { "cf-connecting-ip": "203.0.113.88" },
+    });
+    let blocked = false;
+    for (let i = 0; i < 200; i += 1) blocked = tooMuchFromThisAddress(request);
+    expect(blocked).toBe(true);
+
+    const quiet = new Request("https://fasthandstudio.asia/", {
+      headers: { "cf-connecting-ip": "203.0.113.99" },
+    });
+    expect(tooMuchFromThisAddress(quiet)).toBe(false);
   });
 });
