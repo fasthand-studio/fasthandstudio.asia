@@ -11,13 +11,16 @@ accessibility reasoning rules). Where they conflict, this file wins for this rep
 
 ## Palette
 
-- Strict black and white in both themes. All colour tokens use oklch chroma 0.
-- Dark mode is reachable three ways: the stored switch (`.dark` / `.light` on
-  `<html>`, painted by the same-origin `/theme.js` before first paint), the `.dark`
-  class, and `prefers-color-scheme` for anyone who never touched the switch — the
-  media block yields to `.light`. Keep the two dark token blocks in sync.
-- Depth is tokenised: `--shadow-1/2/3` are a soft cast in light mode and a top
-  highlight plus a black cast in dark, where grey shadows vanish.
+- Strict black and white, in one theme: light. All colour tokens use oklch
+  chroma 0 and `:root` is the only palette block — no `.dark`, no
+  `prefers-color-scheme` variants, ever. `color-scheme: light` on `:root` pins
+  form controls and scrollbars to white even on a dark OS.
+- The header's "Dark mode" button is not a switch: it stays visible as a
+  courtesy and answers every click with one of three random witty refusals in a
+  `.theme-tease` bubble, while the in-house glyph carves a crescent and hands it
+  back (`data-declining`, ~0.85 s). Nothing it does touches the palette.
+- Depth is tokenised: `--shadow-1/2/3` are a soft monochrome cast, drawn from the
+  same ink as the palette.
 - No gradients, no blurs, no new colours. The `grain` utility is dots only.
 
 ## Page anatomy
@@ -114,17 +117,16 @@ accessibility reasoning rules). Where they conflict, this file wins for this rep
   sideways inside `SceneFigure`'s `.scene-frame` (`overflow-x-auto`, quiet
   scrollbar); tall scenes get a `max-w-` near their natural size and never upscale.
   Check the scale arithmetic at 320px and 1280px, not only on a desktop.
-- Theme switch: `public/theme.js` (same-origin, CSP-legal) paints the `dark`/`light`
-  class before first paint; `useTheme()` mirrors it after hydration; `ThemeToggle`
-  sits in both headers and animates through the `theming` cross-fade. The media
-  block targets `:root:not(.light)` so an explicit light choice beats a dark OS.
-  Any new token must be defined in the `:root`, media-dark and `.dark` blocks alike.
-- The switch glyph is the one icon drawn in-house (`ThemeToggle.tsx`): rays collapse
-  and a mask nib carves the crescent on the same clock the colours fade, which a
-  Lottie cannot do — it bakes its fill at mount and would snap mid-transition.
-  Content icons stay IconTree; a control that paints the palette is not content.
-- The `theme-color` meta is a single tag retinted by `theme.ts`: Router merges metas
-  of the same `name`, so media-keyed pairs silently collapse to the last one.
+- Theme: light-only (see Palette). There is no `theme.js`, no `useTheme`, no
+  `.dark` tokens, no cross-fade — the only theme code left is the declining
+  toggle in `ThemeToggle.tsx`, which changes no classes on `<html>`.
+- The switch glyph is the one icon drawn in-house (`ThemeToggle.tsx`): on each
+  click the mask nib slides in, carves a crescent, and retreats — dark mode
+  appears for a beat and is handed back. A Lottie cannot do this (it bakes its
+  fill at mount); content icons stay IconTree, and a control that jokes about
+  the palette is not content.
+- The `theme-color` meta is a single static tag (`#fbf9f5`) in `__root.tsx`; the
+  palette never changes, so nothing retints it.
 
 ## Dead links
 
@@ -135,6 +137,17 @@ accessibility reasoning rules). Where they conflict, this file wins for this rep
 
 ## Changelog
 
+- 2026-11-27 (light-only): removed dark mode entirely — deleted `public/theme.js`
+  and `src/components/product/theme.ts`, dropped the `/theme.js` script tag and
+  `suppressHydrationWarning` from `__root.tsx` (nothing mutates `<html>` before
+  hydration anymore), stripped every `.dark` / `prefers-color-scheme: dark` block
+  and the `theming` cross-fade from `styles.css` (`:root` is now the single
+  palette, with `color-scheme: light` pinning browser UI), and simplified
+  `TreeIcon` (no OS/class listeners — one theme, nothing to remount for).
+  `ThemeToggle` stays visible but is no longer a switch: each click carves a
+  crescent in the glyph and answers with one of three random witty refusals in a
+  `.theme-tease` bubble (`role="status"`, animation-restarting key, timers cleaned
+  up, frozen under `prefers-reduced-motion`).
 - 2026-11-27 (scene text-defect pass): fixed every text/color defect found in
   `scenes.tsx` — removed the HTML `<span>` wrapper inside the bench SVG (a `<text>`
   with token classes instead), moved the phone label out of the `skewX(-30)` group so

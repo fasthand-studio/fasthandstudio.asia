@@ -78,19 +78,13 @@ const SHARE_IMAGE_ALT = "FastHand Studio — the development studio behind FastH
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
-    scripts: [
-      // Same-origin, pre-hydration: paints the stored theme on <html> before the
-      // first frame and flags JS as available for the entrance animations.
-      { src: "/theme.js" },
-    ],
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: SITE_TITLE },
       { name: "description", content: SITE_DESCRIPTION },
       { name: "author", content: "FastHand Studio" },
-      // Router merges metas by name, so media-keyed pairs collapse to one. This
-      // single tag is re-tinted by theme.ts whenever the class flips.
+      // The site has one palette, so this tag is written once and never retinted.
       { name: "theme-color", content: "#fbf9f5" },
       {
         name: "robots",
@@ -164,7 +158,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head>
         <HeadContent />
       </head>

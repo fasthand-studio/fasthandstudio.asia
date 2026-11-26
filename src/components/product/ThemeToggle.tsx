@@ -1,4 +1,4 @@
-import { useTheme } from "./theme";
+import { useEffect, useRef, useState } from "react";
 
 // Eight rays, derived rather than hand-typed so the glyph stays symmetric.
 const RAYS = Array.from({ length: 8 }, (_, i) => {
@@ -13,13 +13,20 @@ const RAYS = Array.from({ length: 8 }, (_, i) => {
   };
 });
 
+// Short lines: the wink is the point, not the essay.
+const ANSWERS = [
+  "Dark mode isn't in our nature.",
+  "We only ship in white. Nice try, though.",
+  "Paper and ink — that's the whole palette.",
+];
+
+const HIDE_AFTER = 3200;
+
 /**
- * The switch's own mark, drawn here rather than borrowed: rays collapse and a
- * mask nib slides over the disc to form a crescent, so the icon travels with the
- * palette for as long as the colours do. An IconTree Lottie would snap to its
- * baked colour the instant the class flips.
+ * The one icon drawn in-house. It keeps the crescent as a joke it plays on
+ * request: the nib slides in, carves a moon, and hands it straight back.
  */
-function ThemeGlyph({ dark }: { dark: boolean }) {
+function ThemeGlyph({ declining }: { declining: boolean }) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -30,7 +37,7 @@ function ThemeGlyph({ dark }: { dark: boolean }) {
       strokeWidth={1.7}
       strokeLinecap="round"
       aria-hidden="true"
-      data-mode={dark ? "dark" : "light"}
+      data-declining={declining ? "true" : "false"}
       className="theme-glyph shrink-0"
     >
       <mask id="theme-glyph-crescent">
@@ -48,28 +55,63 @@ function ThemeGlyph({ dark }: { dark: boolean }) {
 }
 
 /**
- * Dark/light switch for the whole site. public/theme.js has already painted the
- * class before first paint, so this button only has to change it from here.
+ * The site has a single theme, so this is not a switch: it is a question the
+ * header invites you to ask. Clicking it answers in words and in the glyph, and
+ * leaves the palette exactly where it was.
  */
 export function ThemeToggle() {
-  const { theme, toggle } = useTheme();
-  const dark = theme === "dark";
-  const label = dark ? "Switch to light theme" : "Switch to dark theme";
+  const [answer, setAnswer] = useState<number | null>(null);
+  const [declining, setDeclining] = useState(false);
+  // Re-keying the glyph restarts its animation on a click made while an earlier
+  // answer is still on screen.
+  const [beat, setBeat] = useState(0);
+  const previous = useRef(-1);
+  const hide = useRef<number | undefined>(undefined);
+  const restore = useRef<number | undefined>(undefined);
+
+  useEffect(
+    () => () => {
+      window.clearTimeout(hide.current);
+      window.clearTimeout(restore.current);
+    },
+    [],
+  );
+
+  const decline = () => {
+    let pick = Math.floor(Math.random() * ANSWERS.length);
+    if (pick === previous.current) pick = (pick + 1) % ANSWERS.length;
+    previous.current = pick;
+
+    window.clearTimeout(hide.current);
+    window.clearTimeout(restore.current);
+    setAnswer(pick);
+    setDeclining(true);
+    setBeat((n) => n + 1);
+    restore.current = window.setTimeout(() => setDeclining(false), 850);
+    hide.current = window.setTimeout(() => {
+      setAnswer(null);
+      setDeclining(false);
+    }, HIDE_AFTER);
+  };
+
   return (
-    <>
+    <span className="relative inline-flex">
       <button
         type="button"
-        onClick={toggle}
-        aria-label={label}
-        title={label}
+        onClick={decline}
+        aria-label="Dark mode"
+        title="Dark mode"
+        aria-describedby={answer === null ? undefined : "theme-answer"}
         className="btn-32 border border-border text-muted-foreground hover:bg-muted hover:text-foreground"
       >
-        <ThemeGlyph dark={dark} />
-        <span className="hidden lg:inline">{dark ? "Light" : "Dark"}</span>
+        <ThemeGlyph key={beat} declining={declining} />
+        <span className="hidden lg:inline">Dark mode</span>
       </button>
-      <span role="status" className="sr-only">
-        {dark ? "Dark theme active" : "Light theme active"}
-      </span>
-    </>
+      {answer !== null && (
+        <span key={beat} id="theme-answer" role="status" className="theme-tease">
+          {ANSWERS[answer]}
+        </span>
+      )}
+    </span>
   );
 }

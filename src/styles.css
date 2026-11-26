@@ -2,19 +2,17 @@
 @source "../src";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
-
 /*
  * Design system definition.
  *
  * The @theme inline block maps CSS custom properties to Tailwind utility
  * classes (e.g. --color-primary -> bg-primary, text-primary).
  *
- * The :root and .dark blocks define the actual color values using oklch.
- * All colors MUST use oklch format.
+ * The site is light-only: :root holds the single set of values, in oklch, and
+ * every component is drawn against them.
  *
  * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
+ * 1. Add the variable to :root
  * 2. Register it in @theme inline as --color-<name>: var(--<name>)
  */
 
@@ -71,6 +69,9 @@
 }
 
 :root {
+  /* One theme, claimed outright: form controls, scrollbars and the browser UI
+     all paint light, whatever the operating system prefers. */
+  color-scheme: light;
   --radius: 16px;
   --background: oklch(0.982 0.006 85);
   --foreground: oklch(0.2 0.01 60);
@@ -111,152 +112,98 @@
   --sidebar-ring: oklch(0.704 0.04 256.788);
 }
 
-/*
- * Dark palette — pure black and white, reachable three ways: the .dark class that
- * the same-origin /theme.js script paints before first paint, the explicit .dark
- * rule below (kept in sync by hand), and the system preference for visitors who
- * never ran the script. A stored "light" choice must beat the OS, so the media
- * block steps aside for .light.
- */
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) {
-    color-scheme: dark;
-    --background: oklch(0.13 0 0);
-    --foreground: oklch(0.97 0 0);
-    --card: oklch(0.18 0 0);
-    --card-foreground: oklch(0.97 0 0);
-    --popover: oklch(0.18 0 0);
-    --popover-foreground: oklch(0.97 0 0);
-    --primary: oklch(0.94 0 0);
-    --primary-foreground: oklch(0.14 0 0);
-    --secondary: oklch(0.24 0 0);
-    --secondary-foreground: oklch(0.97 0 0);
-    --muted: oklch(0.24 0 0);
-    --muted-foreground: oklch(0.68 0 0);
-    --accent: oklch(0.94 0 0);
-    --accent-foreground: oklch(0.14 0 0);
-    --destructive: oklch(0.92 0 0);
-    --destructive-foreground: oklch(0.14 0 0);
-    --border: oklch(1 0 0 / 14%);
-    --input: oklch(1 0 0 / 20%);
-    --ring: oklch(0.9 0 0);
-    --sys-green: oklch(0.88 0 0);
-    --sys-orange: oklch(0.7 0 0);
-    --sys-purple: oklch(0.78 0 0);
-    --sys-red: oklch(0.92 0 0);
-    --chart-1: oklch(0.9 0 0);
-    --chart-2: oklch(0.74 0 0);
-    --chart-3: oklch(0.6 0 0);
-    --chart-4: oklch(0.46 0 0);
-    --chart-5: oklch(0.32 0 0);
-    --sidebar: oklch(0.18 0 0);
-    --sidebar-foreground: oklch(0.97 0 0);
-    --sidebar-primary: oklch(0.94 0 0);
-    --sidebar-primary-foreground: oklch(0.14 0 0);
-    --sidebar-accent: oklch(0.24 0 0);
-    --sidebar-accent-foreground: oklch(0.97 0 0);
-    --sidebar-border: oklch(1 0 0 / 14%);
-    --sidebar-ring: oklch(0.9 0 0);
-  }
-  :root:not(.light) .plate {
-    background: oklch(0.18 0 0 / 0.82);
-  }
-}
-
-.dark {
-  color-scheme: dark;
-  --background: oklch(0.13 0 0);
-  --foreground: oklch(0.97 0 0);
-  --card: oklch(0.18 0 0);
-  --card-foreground: oklch(0.97 0 0);
-  --popover: oklch(0.18 0 0);
-  --popover-foreground: oklch(0.97 0 0);
-  --primary: oklch(0.94 0 0);
-  --primary-foreground: oklch(0.14 0 0);
-  --secondary: oklch(0.24 0 0);
-  --secondary-foreground: oklch(0.97 0 0);
-  --muted: oklch(0.24 0 0);
-  --muted-foreground: oklch(0.68 0 0);
-  --accent: oklch(0.94 0 0);
-  --accent-foreground: oklch(0.14 0 0);
-  --destructive: oklch(0.92 0 0);
-  --destructive-foreground: oklch(0.14 0 0);
-  --border: oklch(1 0 0 / 14%);
-  --input: oklch(1 0 0 / 20%);
-  --ring: oklch(0.9 0 0);
-  --sys-green: oklch(0.88 0 0);
-  --sys-orange: oklch(0.7 0 0);
-  --sys-purple: oklch(0.78 0 0);
-  --sys-red: oklch(0.92 0 0);
-  --chart-1: oklch(0.9 0 0);
-  --chart-2: oklch(0.74 0 0);
-  --chart-3: oklch(0.6 0 0);
-  --chart-4: oklch(0.46 0 0);
-  --chart-5: oklch(0.32 0 0);
-  --sidebar: oklch(0.18 0 0);
-  --sidebar-foreground: oklch(0.97 0 0);
-  --sidebar-primary: oklch(0.94 0 0);
-  --sidebar-primary-foreground: oklch(0.14 0 0);
-  --sidebar-accent: oklch(0.24 0 0);
-  --sidebar-accent-foreground: oklch(0.97 0 0);
-  --sidebar-border: oklch(1 0 0 / 14%);
-  --sidebar-ring: oklch(0.9 0 0);
-}
-.dark .plate {
-  background: oklch(0.18 0 0 / 0.82);
-}
-
-/* An explicit light choice also owns the scrollbar and form-control painting. */
-.light {
-  color-scheme: light;
-}
 
 /*
- * Depth. Light themes get a soft cast shadow; dark themes get a top highlight
- * plus a black cast, because a grey shadow disappears on near-black. Written
- * per mechanism so the palette rules above still hold.
+ * Depth. A soft monochrome cast, drawn from the same ink as the palette, so the
+ * shadow reads as paper lifted off paper.
  */
 :root {
   --shadow-1: 0 1px 2px oklch(0.2 0.01 60 / 7%), 0 8px 22px oklch(0.2 0.01 60 / 7%);
   --shadow-2: 0 2px 6px oklch(0.2 0.01 60 / 9%), 0 22px 48px oklch(0.2 0.01 60 / 13%);
   --shadow-3: 0 34px 70px oklch(0.2 0.01 60 / 16%);
 }
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) {
-    --shadow-1: inset 0 1px 0 oklch(1 0 0 / 7%), 0 8px 22px oklch(0 0 0 / 55%);
-    --shadow-2: inset 0 1px 0 oklch(1 0 0 / 9%), 0 22px 48px oklch(0 0 0 / 65%);
-    --shadow-3: 0 34px 70px oklch(0 0 0 / 70%);
-  }
-}
-.dark {
-  --shadow-1: inset 0 1px 0 oklch(1 0 0 / 7%), 0 8px 22px oklch(0 0 0 / 55%);
-  --shadow-2: inset 0 1px 0 oklch(1 0 0 / 9%), 0 22px 48px oklch(0 0 0 / 65%);
-  --shadow-3: 0 34px 70px oklch(0 0 0 / 70%);
-}
 
-/* The switch glyph: rays fold away and the mask nib carves the crescent. */
+/*
+ * The switch glyph declines: the mask nib slides in to carve a crescent, holds a
+ * beat, then retreats — dark mode shows up and leaves, in time with the answer.
+ */
 .theme-glyph .tg-rays {
   transform-box: fill-box;
   transform-origin: center;
-  transition:
-    transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
-    opacity 0.22s linear;
-}
-.theme-glyph[data-mode="dark"] .tg-rays {
-  transform: rotate(28deg) scale(0.2);
-  opacity: 0;
 }
 .theme-glyph .tg-nib {
   transform: translate(15px, 15px);
-  transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-.theme-glyph[data-mode="dark"] .tg-nib {
-  transform: translate(0, 0);
+@keyframes tg-nib-decline {
+  0% {
+    transform: translate(15px, 15px);
+  }
+  34%,
+  58% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(15px, 15px);
+  }
+}
+@keyframes tg-rays-decline {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+  42% {
+    transform: rotate(16deg) scale(0.82);
+  }
+}
+.theme-glyph[data-declining="true"] .tg-nib {
+  animation: tg-nib-decline 0.82s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.theme-glyph[data-declining="true"] .tg-rays {
+  animation: tg-rays-decline 0.82s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* The answer, in a bubble under the button. */
+.theme-tease {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 40;
+  width: max-content;
+  max-width: min(16rem, calc(100vw - 2.5rem));
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  corner-shape: superellipse(1.5);
+  background: var(--color-card);
+  box-shadow: var(--shadow-2);
+  color: var(--color-foreground);
+  font-size: 14px;
+  line-height: 1.35;
+  animation: tease-in 0.26s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.theme-tease::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  right: 18px;
+  width: 8px;
+  height: 8px;
+  transform: rotate(45deg);
+  background: var(--color-card);
+  border-top: 1px solid var(--color-border);
+  border-left: 1px solid var(--color-border);
+}
+@keyframes tease-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .theme-glyph .tg-rays,
-  .theme-glyph .tg-nib {
-    transition: none;
+  .theme-glyph[data-declining="true"] .tg-nib,
+  .theme-glyph[data-declining="true"] .tg-rays,
+  .theme-tease {
+    animation: none;
   }
 }
 
@@ -438,11 +385,6 @@ html {
     0 1px 0 oklch(0.2 0 0 / 0.04),
     0 12px 28px -18px oklch(0.2 0 0 / 0.25);
 }
-.dark .surface {
-  box-shadow:
-    0 1px 0 oklch(1 0 0 / 0.04),
-    0 16px 32px -20px oklch(0 0 0 / 0.65);
-}
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .surface {
     transition:
@@ -463,25 +405,6 @@ html {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
-  }
-}
-
-/* Theme cross-fade, enabled only while a switch is in flight (class set by theme.ts). */
-html.theming,
-html.theming body,
-html.theming * {
-  transition:
-    background-color 0.45s ease,
-    border-color 0.45s ease,
-    color 0.45s ease,
-    fill 0.45s ease,
-    stroke 0.45s ease !important;
-}
-@media (prefers-reduced-motion: reduce) {
-  html.theming,
-  html.theming body,
-  html.theming * {
-    transition: none !important;
   }
 }
 

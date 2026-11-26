@@ -62,9 +62,9 @@ const registry = {
 export type TreeIconName = keyof typeof registry;
 
 /**
- * Lottie bakes its fills at mount and cannot see a stylesheet colour change, so
- * the colour is read from the wrapper on the client and the icon remounts when
- * the theme changes. The server draws an empty box at the final size.
+ * Lottie bakes its fills at mount, so the colour is read from the wrapper on the
+ * client before the icon is drawn. The server renders an empty box at the final
+ * size; the site has one theme, so nothing ever needs to remount.
  */
 export function TreeIcon({
   name,
@@ -83,17 +83,7 @@ export function TreeIcon({
 
   useEffect(() => {
     const el = host.current;
-    if (!el) return;
-    const sync = () => setColor(getComputedStyle(el).color);
-    sync();
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    media.addEventListener("change", sync);
-    const observer = new MutationObserver(sync);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-    return () => {
-      media.removeEventListener("change", sync);
-      observer.disconnect();
-    };
+    if (el) setColor(getComputedStyle(el).color);
   }, []);
 
   const Icon = registry[name];
