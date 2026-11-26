@@ -16,9 +16,11 @@ const reposQuery = queryOptions({
 const ORIGIN = "https://fasthandstudio.asia";
 
 export const Route = createFileRoute("/")({
-  // Title, description and social tags come from the root head. This route only
-  // adds the page-level structured data.
+  // Title, description and social tags come from the root head. The root no
+  // longer claims a canonical: each route owns its own, or every page would
+  // publish two and the first would win.
   head: () => ({
+    links: [{ rel: "canonical", href: `${ORIGIN}/` }],
     scripts: [
       {
         type: "application/ld+json",
