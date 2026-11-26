@@ -2,6 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { Suspense } from "react";
 import { getRepos, GITHUB_ORG, type Repo } from "@/lib/github.functions";
+import { PRODUCTS as CATALOG } from "@/components/product/catalog";
+import { BenchScene, SceneFigure } from "@/components/product/scenes";
+import { TreeIcon, type TreeIconName } from "@/components/product/TreeIcon";
+import { ThemeToggle } from "@/components/product/ThemeToggle";
 
 const reposQuery = queryOptions({
   queryKey: ["repos"],
@@ -69,6 +73,10 @@ function Index() {
                 <GitIcon /> {GITHUB_ORG}
               </a>
             </div>
+            <SceneFigure caption="Figure 1. The bench, drawn rather than photographed: the organization feeds the product list, and the list below is read from it live rather than typed in by hand.">
+              <BenchScene />
+            </SceneFigure>
+            <ProductsStrip />
             <Suspense fallback={<RepoSkeleton />}>
               <Repos />
             </Suspense>
@@ -89,13 +97,42 @@ function Header() {
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-5 md:px-8">
         <a href="/" className="flex items-center gap-2 font-semibold">
           <img src="/logo.svg" alt="" width={45} height={30} className="h-[30px] w-[45px]" />
-          FastHand Studio
+          <span className="hidden sm:inline">FastHand Studio</span>
         </a>
         <nav className="flex items-center gap-1 text-[15px]">
-          <a href="#focus" className="btn-32 hidden font-normal text-muted-foreground hover:bg-muted sm:inline-flex">Focus</a>
-          <a href="#work" className="btn-32 hidden font-normal text-muted-foreground hover:bg-muted sm:inline-flex">Work</a>
-          <a href="#community" className="btn-32 hidden font-normal text-muted-foreground hover:bg-muted sm:inline-flex">Community</a>
-          <a href={GH} target="_blank" rel="noreferrer" className="btn-32 bg-primary text-primary-foreground">GitHub</a>
+          <a
+            href="#focus"
+            className="btn-32 hidden font-normal text-muted-foreground hover:bg-muted sm:inline-flex"
+          >
+            Focus
+          </a>
+          <a
+            href="#work"
+            className="btn-32 hidden font-normal text-muted-foreground hover:bg-muted sm:inline-flex"
+          >
+            Work
+          </a>
+          <a
+            href="/products"
+            className="btn-32 hidden font-normal text-muted-foreground hover:bg-muted sm:inline-flex"
+          >
+            Products
+          </a>
+          <a
+            href="#community"
+            className="btn-32 hidden font-normal text-muted-foreground hover:bg-muted sm:inline-flex"
+          >
+            Community
+          </a>
+          <ThemeToggle />
+          <a
+            href={GH}
+            target="_blank"
+            rel="noreferrer"
+            className="btn-32 bg-primary text-primary-foreground"
+          >
+            GitHub
+          </a>
         </nav>
       </div>
     </header>
@@ -114,7 +151,9 @@ function Hero() {
           software and open-source code, and we do it in public with the people who use it.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
-          <a href="#work" className="btn-44 bg-primary text-primary-foreground">See current work</a>
+          <a href="#work" className="btn-44 bg-primary text-primary-foreground">
+            See current work
+          </a>
           <a href={GH} target="_blank" rel="noreferrer" className="btn-44 border border-border">
             <GitIcon /> Follow on GitHub
           </a>
@@ -137,7 +176,10 @@ function StudioStack() {
             style={{ transform: `translateZ(${i * 34}px)` }}
           >
             {i === 2 && (
-              <div className="absolute inset-[22%] rounded-[32px] border border-accent" style={{ cornerShape: "superellipse(1.5)" } as React.CSSProperties} />
+              <div
+                className="absolute inset-[22%] rounded-[32px] border border-accent"
+                style={{ cornerShape: "superellipse(1.5)" } as React.CSSProperties}
+              />
             )}
           </div>
         ))}
@@ -162,10 +204,26 @@ function Intro() {
 }
 
 const focus = [
-  { t: "Tools", d: "Command-line utilities and libraries we needed ourselves first.", c: "text-accent" },
-  { t: "Software", d: "Applications that sit on top of those tools and get used daily.", c: "text-sys-green" },
-  { t: "Open source", d: "Most of what we write is public, licensed, and open to pull requests.", c: "text-sys-orange" },
-  { t: "Experiments", d: "Short-lived prototypes. Some become projects, most get archived.", c: "text-sys-purple" },
+  {
+    t: "Tools",
+    d: "Command-line utilities and libraries we needed ourselves first.",
+    c: "text-accent",
+  },
+  {
+    t: "Software",
+    d: "Applications that sit on top of those tools and get used daily.",
+    c: "text-sys-green",
+  },
+  {
+    t: "Open source",
+    d: "Most of what we write is public, licensed, and open to pull requests.",
+    c: "text-sys-orange",
+  },
+  {
+    t: "Experiments",
+    d: "Short-lived prototypes. Some become projects, most get archived.",
+    c: "text-sys-purple",
+  },
 ];
 
 function Focus() {
@@ -173,6 +231,9 @@ function Focus() {
     <section id="focus" className="border-t border-border">
       <div className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
         <h2 className="text-3xl font-semibold tracking-tight">What we spend our time on</h2>
+        <p className="mt-3 max-w-2xl text-muted-foreground">
+          Four kinds of work, and each one is public while it is being made rather than after.
+        </p>
         <div className="mt-10 grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
           {focus.map((f, i) => (
             <div key={f.t} className="border-t border-foreground pt-4">
@@ -187,7 +248,11 @@ function Focus() {
   );
 }
 
-const parts = ["Products", "Community", "Docs"];
+const parts: { t: string; i: TreeIconName }[] = [
+  { t: "Products", i: "component" },
+  { t: "Community", i: "people" },
+  { t: "Docs", i: "book" },
+];
 
 function Ecosystem() {
   return (
@@ -212,8 +277,8 @@ function Ecosystem() {
             <div className="mx-auto h-7 w-px bg-border" />
             <div className="flex">
               {parts.map((p) => (
-                <div key={p} className="tree-branch min-w-0 flex-1 px-1.5">
-                  <EcosystemPart t={p} cls="h-16 items-center justify-center" />
+                <div key={p.t} className="tree-branch min-w-0 flex-1 px-1.5">
+                  <EcosystemPart p={p} cls="h-16 items-center justify-center" />
                 </div>
               ))}
             </div>
@@ -225,8 +290,8 @@ function Ecosystem() {
             <div className="ml-[13px] h-6 w-px bg-border" />
             <ul>
               {parts.map((p) => (
-                <li key={p} className="tree-twig py-1.5 pl-8">
-                  <EcosystemPart t={p} cls="h-14 items-center" />
+                <li key={p.t} className="tree-twig py-1.5 pl-8">
+                  <EcosystemPart p={p} cls="h-14 items-center" />
                 </li>
               ))}
             </ul>
@@ -255,13 +320,64 @@ function EcosystemNode({ t, d, current }: { t: string; d: string; current?: bool
   );
 }
 
-function EcosystemPart({ t, cls }: { t: string; cls: string }) {
+function EcosystemPart({ p, cls }: { p: { t: string; i: TreeIconName }; cls: string }) {
   return (
     <div
-      className={`flex border border-border p-3 text-[15px] font-semibold text-muted-foreground ${cls}`}
+      className={`flex gap-2 border border-border p-3 text-[15px] font-semibold text-muted-foreground ${cls}`}
       style={{ borderRadius: 20, cornerShape: "superellipse(1.5)" } as React.CSSProperties}
     >
-      {t}
+      <TreeIcon name={p.i} size={20} className="shrink-0" />
+      {p.t}
+    </div>
+  );
+}
+
+function ProductsStrip() {
+  return (
+    <div className="mt-10">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="max-w-xl">
+          <p className="font-mono text-sm text-muted-foreground">Products</p>
+          <h3 className="mt-2 text-xl font-semibold tracking-tight">
+            Software you can run yourself
+          </h3>
+          <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">
+            The documented pages open directly; anything still without a page is listed as upcoming,
+            so no row here links to something that does not exist yet.
+          </p>
+        </div>
+        <a href="/products" className="btn-32 border border-border">
+          All products →
+        </a>
+      </div>
+      <ul className="mt-5 divide-y divide-border border-y border-border">
+        {CATALOG.map((p) =>
+          p.ready ? (
+            <li key={p.name}>
+              <a
+                href={p.href}
+                className="grid gap-1 py-5 transition-colors hover:bg-muted md:grid-cols-[1fr_2fr_auto] md:items-center md:gap-8 md:px-3"
+              >
+                <span className="flex items-center gap-3 font-semibold">
+                  <TreeIcon name={p.icon} size={22} motion="hover" />
+                  {p.name}
+                </span>
+                <span className="text-muted-foreground">{p.pitch}</span>
+                <span className="font-mono text-sm text-muted-foreground">view product →</span>
+              </a>
+            </li>
+          ) : (
+            <li
+              key={p.name}
+              className="grid gap-1 py-5 md:grid-cols-[1fr_2fr_auto] md:items-center md:gap-8 md:px-3"
+            >
+              <span className="font-semibold text-muted-foreground">{p.name}</span>
+              <span className="text-muted-foreground">{p.pitch}</span>
+              <span className="font-mono text-sm text-muted-foreground">soon</span>
+            </li>
+          ),
+        )}
+      </ul>
     </div>
   );
 }
@@ -289,7 +405,11 @@ function Repos() {
 }
 
 function RepoRow({ r }: { r: Repo }) {
-  const date = new Date(r.updatedAt).toLocaleDateString("en", { month: "short", day: "numeric", year: "numeric" });
+  const date = new Date(r.updatedAt).toLocaleDateString("en", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
   return (
     <li>
       <a
@@ -333,7 +453,9 @@ function Community() {
       <div className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
         <div className="grid gap-10 md:grid-cols-[1fr_1.4fr]">
           <div>
-            <h2 className="text-3xl font-semibold tracking-tight">Built with the people who use it</h2>
+            <h2 className="text-3xl font-semibold tracking-tight">
+              Built with the people who use it
+            </h2>
             <p className="mt-4 text-muted-foreground">
               Developers and creators shape most of our roadmap. If you've hit a wall with one of
               our tools, you probably know something we don't yet.
@@ -376,10 +498,17 @@ function Closing() {
           Pick a repository and make your first contribution.
         </h2>
         <div className="flex flex-wrap gap-3">
-          <a href={GH} target="_blank" rel="noreferrer" className="btn-44 bg-primary text-primary-foreground">
+          <a
+            href={GH}
+            target="_blank"
+            rel="noreferrer"
+            className="btn-44 bg-primary text-primary-foreground"
+          >
             <GitIcon /> Go to GitHub
           </a>
-          <a href="#work" className="btn-44 bg-secondary">Browse work</a>
+          <a href="#work" className="btn-44 bg-secondary">
+            Browse work
+          </a>
         </div>
       </div>
     </section>
@@ -391,7 +520,9 @@ function Footer() {
     <footer className="border-t border-border">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-5 text-sm text-muted-foreground md:px-8">
         <span>© {new Date().getFullYear()} FastHand Studio · fasthandstudio.asia</span>
-        <a href={GH} target="_blank" rel="noreferrer" className="hover:text-foreground">GitHub</a>
+        <a href={GH} target="_blank" rel="noreferrer" className="hover:text-foreground">
+          GitHub
+        </a>
       </div>
     </footer>
   );
