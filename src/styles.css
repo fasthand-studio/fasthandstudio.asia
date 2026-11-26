@@ -55,7 +55,9 @@
   --color-sys-orange: var(--sys-orange);
   --color-sys-purple: var(--sys-purple);
   --color-sys-red: var(--sys-red);
-  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    sans-serif;
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -146,6 +148,13 @@
     border-color: var(--color-border);
   }
 
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
@@ -155,50 +164,321 @@
   }
 }
 
+/* Theme crossfade, active only for the ~450ms after a toggle (see lib/theme.ts),
+ * so normal navigation and typing never pay for page-wide transitions. */
+.theme-anim,
+.theme-anim *,
+.theme-anim *::before,
+.theme-anim *::after {
+  transition:
+    background-color 0.35s ease,
+    border-color 0.35s ease,
+    color 0.35s ease,
+    fill 0.35s ease,
+    stroke 0.35s ease,
+    outline-color 0.35s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .theme-anim,
+  .theme-anim *,
+  .theme-anim *::before,
+  .theme-anim *::after {
+    transition: none;
+  }
+  .hover-lift:hover {
+    transform: none;
+  }
+}
+
 /* Continuous curvature: radius = H/2 + superellipse(1.5) */
 @utility btn-32 {
-  height: 32px; padding: 0 14px; border-radius: 16px; corner-shape: superellipse(1.5);
-  display: inline-flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; white-space: nowrap;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 16px;
+  corner-shape: superellipse(1.5);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
   transition: opacity 0.1s;
-  &:hover { opacity: 0.8; }
-  &:focus-visible { outline: 2px solid var(--color-ring); outline-offset: 2px; }
+  &:hover {
+    opacity: 0.8;
+  }
+  &:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
 }
 @utility btn-44 {
-  height: 44px; padding: 0 22px; border-radius: 22px; corner-shape: superellipse(1.5);
-  display: inline-flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 600; white-space: nowrap;
+  height: 44px;
+  padding: 0 22px;
+  border-radius: 22px;
+  corner-shape: superellipse(1.5);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 17px;
+  font-weight: 600;
+  white-space: nowrap;
   transition: opacity 0.1s;
-  &:hover { opacity: 0.85; }
-  &:focus-visible { outline: 2px solid var(--color-ring); outline-offset: 2px; }
+  &:hover {
+    opacity: 0.85;
+  }
+  &:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+}
+@utility btn-32-icon {
+  height: 32px;
+  width: 32px;
+  padding: 0;
+  border-radius: 16px;
+  corner-shape: superellipse(1.5);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.1s;
+  &:hover {
+    opacity: 0.8;
+  }
+  &:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+}
+@utility hover-lift {
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
+  &:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in oklch, var(--color-foreground) 45%, var(--color-border));
+  }
 }
 @utility surface {
-  background: var(--color-card); border: 1px solid var(--color-border);
-  border-radius: 24px; corner-shape: superellipse(1.5);
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 24px;
+  corner-shape: superellipse(1.5);
 }
 /* Org chart: horizontal bus across sibling centres, with a drop into each leaf */
 @utility tree-branch {
-  position: relative; padding-top: 28px;
-  &::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: var(--color-border); }
-  &::after { content: ''; position: absolute; top: 0; left: 50%; width: 1px; height: 28px; background: var(--color-border); }
-  &:first-child::before { left: 50%; }
-  &:last-child::before { right: 50%; }
+  position: relative;
+  padding-top: 28px;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--color-border);
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 1px;
+    height: 28px;
+    background: var(--color-border);
+  }
+  &:first-child::before {
+    left: 50%;
+  }
+  &:last-child::before {
+    right: 50%;
+  }
 }
 /* Org chart, stacked variant: rail down the left edge with a tick into each leaf */
 @utility tree-twig {
   position: relative;
-  &::before { content: ''; position: absolute; left: 13px; top: 0; bottom: 0; width: 1px; background: var(--color-border); }
-  &::after { content: ''; position: absolute; left: 13px; top: 50%; width: 19px; height: 1px; background: var(--color-border); }
-  &:last-child::before { bottom: 50%; }
+  &::before {
+    content: "";
+    position: absolute;
+    left: 13px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--color-border);
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    width: 19px;
+    height: 1px;
+    background: var(--color-border);
+  }
+  &:last-child::before {
+    bottom: 50%;
+  }
 }
 @utility grain {
-  background-image: radial-gradient(oklch(0.2 0 0 / 0.18) 0.6px, transparent 0.6px), linear-gradient(135deg, var(--color-accent), var(--color-sys-purple));
-  background-size: 3px 3px, 100% 100%;
+  background-image:
+    radial-gradient(oklch(0.2 0 0 / 0.18) 0.6px, transparent 0.6px),
+    linear-gradient(135deg, var(--color-accent), var(--color-sys-purple));
+  background-size:
+    3px 3px,
+    100% 100%;
+}
+
+@keyframes flow {
+  to {
+    stroke-dashoffset: -320;
+  }
+}
+.flow-line {
+  stroke-dasharray: 5 11;
+  animation: flow 20s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .flow-line {
+    animation: none;
+  }
+}
+
+/* IconTree: sizing fix (wrapper + nested Lottie divs) + reduced-motion gate for hover icons */
+.icontree-icon div,
+.icontree-icon svg {
+  width: 100% !important;
+  height: 100% !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .icon-anim {
+    pointer-events: none;
+  }
+}
+
+/* OCR hero motif: a slow scan sweep over faint document blocks */
+.scanline {
+  animation: scan 9s linear infinite;
+}
+@keyframes scan {
+  0% {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.9;
+  }
+  88% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(540px);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scanline {
+    animation: none;
+    opacity: 0.4;
+  }
+}
+
+/* Fast Notifications hero motif: expanding ripples from one point */
+.ripple {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ripple 7s ease-out infinite;
+}
+@keyframes ripple {
+  0% {
+    transform: scale(0.25);
+    opacity: 0.7;
+  }
+  70% {
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.15);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ripple {
+    animation: none;
+    opacity: 0.18;
+  }
 }
 
 /* CSS 3D scene: stacked studio layers */
-.scene { perspective: 1400px; }
-.stack { transform-style: preserve-3d; transform: rotateX(58deg) rotateZ(-38deg); animation: drift 24s linear infinite; }
-.plate { position: absolute; inset: 0; transform-style: preserve-3d; border: 1px solid var(--color-border);
-  background: oklch(0.995 0.003 85 / 0.82); border-radius: 48px; corner-shape: superellipse(1.5); }
-.plate.ink { background: var(--color-foreground); border-color: var(--color-foreground); }
-@keyframes drift { to { transform: rotateX(58deg) rotateZ(322deg); } }
-@media (prefers-reduced-motion: reduce) { .stack { animation: none; } }
+.scene {
+  perspective: 1400px;
+}
+/* Lock-screen tilt for the notifications hero mock: a card pinned at an
+ * angle that settles flat when you hover it. */
+.mock-tilt {
+  transform: perspective(1100px) rotateY(-7deg) rotateX(2deg);
+  transform-origin: 30% 50%;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.mock-tilt:hover {
+  transform: perspective(1100px) rotateY(0deg) rotateX(0deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .mock-tilt,
+  .mock-tilt:hover {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* FastyDiscord hero motif: the embed card drifts like a fresh message. */
+.mock-float {
+  animation: float 7s ease-in-out infinite;
+}
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mock-float {
+    animation: none;
+  }
+}
+
+/* Anchor links glide; instant jumps under prefers-reduced-motion. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+.stack {
+  transform-style: preserve-3d;
+  transform: rotateX(58deg) rotateZ(-38deg);
+  animation: drift 24s linear infinite;
+}
+.plate {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  border: 1px solid var(--color-border);
+  background: oklch(0.995 0.003 85 / 0.82);
+  border-radius: 48px;
+  corner-shape: superellipse(1.5);
+}
+.plate.ink {
+  background: var(--color-foreground);
+  border-color: var(--color-foreground);
+}
+@keyframes drift {
+  to {
+    transform: rotateX(58deg) rotateZ(322deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stack {
+    animation: none;
+  }
+}

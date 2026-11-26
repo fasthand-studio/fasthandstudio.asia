@@ -11,24 +11,29 @@ import {
 import type { ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import { themeInitScript } from "../lib/theme";
+import { ThemeToggle } from "../components/theme-toggle";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
-        </p>
-        <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Go home
-          </Link>
-        </div>
+    <div className="relative flex min-h-screen flex-col items-center justify-center bg-background px-5 text-center">
+      <div className="absolute right-5 top-5 md:right-8">
+        <ThemeToggle />
+      </div>
+      <p className="font-mono text-sm text-muted-foreground">FastHand Studio</p>
+      <p className="mt-6 text-7xl font-semibold tracking-tight text-foreground">404</p>
+      <h1 className="mt-4 text-xl font-semibold text-foreground">This page isn't here</h1>
+      <p className="mt-2 max-w-sm text-muted-foreground">
+        The page you're looking for doesn't exist or has moved. Our products and code are still one
+        click away.
+      </p>
+      <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <Link to="/" className="btn-44 bg-primary text-primary-foreground">
+          Go home
+        </Link>
+        <a href="/products" className="btn-44 border border-border">
+          Browse products
+        </a>
       </div>
     </div>
   );
@@ -39,31 +44,30 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
   const router = useRouter();
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
-        </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-2">
-          <button
-            onClick={() => {
-              router.invalidate();
-              reset();
-            }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Try again
-          </button>
-          <a
-            href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-          >
-            Go home
-          </a>
-        </div>
+    <div className="relative flex min-h-screen flex-col items-center justify-center bg-background px-5 text-center">
+      <div className="absolute right-5 top-5 md:right-8">
+        <ThemeToggle />
+      </div>
+      <p className="font-mono text-sm text-muted-foreground">FastHand Studio</p>
+      <h1 className="mt-6 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+        This page didn't load
+      </h1>
+      <p className="mt-3 max-w-sm text-muted-foreground">
+        Something went wrong on our end. You can try again or head back home.
+      </p>
+      <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <button
+          onClick={() => {
+            router.invalidate();
+            reset();
+          }}
+          className="btn-44 bg-primary text-primary-foreground"
+        >
+          Try again
+        </button>
+        <a href="/" className="btn-44 border border-border">
+          Go home
+        </a>
       </div>
     </div>
   );
@@ -157,8 +161,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Applies the saved theme before first paint; CSP allows inline scripts. */}
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <HeadContent />
       </head>
       <body>
