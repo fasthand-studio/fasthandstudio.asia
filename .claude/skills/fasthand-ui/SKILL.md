@@ -88,9 +88,10 @@ accessibility reasoning rules). Where they conflict, this file wins for this rep
 - Animated icons come from `icon-tree-animate` (npm, MIT, offline — icons are bundled,
   zero network requests, CSP-safe). Never use the generic `Icon` with an `id` prop in
   this app: import per-icon paths and register them in
-  `src/components/product/TreeIcon.tsx`, which renders a static first frame on the
-  server, reads the wrapper's computed colour on the client, and remounts on theme or
-  `prefers-color-scheme` change (Lottie bakes fills at mount).
+  `src/components/product/TreeIcon.tsx`, which draws an empty box at the final size on
+  the server, reads the wrapper's computed colour once on the client and mounts Lottie
+  with it (Lottie bakes fills at mount). One theme means no theme listener and no
+  remount — colour follows the text token, so nothing can go stale.
 - Playback policy: feature-card icons use `motion="hover"` (one-shot, pointer-initiated;
   falls back to static under `prefers-reduced-motion` via `useIconMotion()` in
   `src/components/product/icontree.ts`); dense lists and tables use `static`. No loop
