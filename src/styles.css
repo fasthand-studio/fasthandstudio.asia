@@ -2,6 +2,10 @@
 @source "../src";
 @import "tw-animate-css";
 
+/* One theme, claimed outright: the dark variant points at a .dark class nothing
+   ever sets, so no dark: utility (ui/ leftovers included) can react to the OS. */
+@custom-variant dark (&:is(.dark *));
+
 /*
  * Design system definition.
  *
