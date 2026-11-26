@@ -32,8 +32,6 @@ export function BenchScene() {
         A GitHub organization plate feeds three product cards, which flow into a laptop on the
         studio bench — the site's repository list drawn from the live organization.
       </desc>
-      {/* ground shadow */}
-      <ellipse cx="600" cy="392" rx="470" ry="18" className="fill-foreground" opacity="0.05" />
       {/* github plate (bottom of the stack) */}
       <g transform="translate(120 118)">
         <rect
@@ -557,7 +555,6 @@ export function RelayScene() {
         a night/day dial, and a Discord message bubble with typing dots — events travel whether or
         not anyone is at a desk.
       </desc>
-      <ellipse cx="550" cy="392" rx="440" ry="18" className="fill-foreground" opacity="0.05" />
       {/* plate 1 — GitHub event */}
       <g transform="translate(96 112)">
         <rect
