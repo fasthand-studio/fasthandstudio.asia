@@ -16,7 +16,7 @@ function MockFrame({ children, label }: { children: ReactNode; label: string }) 
     <div
       role="img"
       aria-label={label}
-      className="surface bg-card p-4 shadow-sm sm:p-5"
+      className="surface bg-card p-4 sm:p-5"
       style={{ maxWidth: 420 }}
     >
       {children}
