@@ -1,14 +1,12 @@
-# FastHand Studio
+# FastNotifications
 
-The public site for [FastHand Studio](https://fasthandstudio.asia) — the development studio behind
-the FastHand ecosystem.
+The public site for FastNotifications — self-hosted push notifications, no Firebase.
 
 ## Stack
 
 - [TanStack Start](https://tanstack.com/start) + Vite, React 19, file-based routes in `src/routes`
 - Tailwind CSS v4 with the design tokens in `src/styles.css`
-- The "What's on the bench" list is read from the GitHub organization at request time by a server
-  function (`src/lib/github.functions.ts`), so it never needs a redeploy.
+- Every page is pre-rendered to static HTML at build time, so the site hosts as plain files.
 
 ## Development
 
@@ -103,7 +101,6 @@ rather than a second copy of the site.
 
 ## Deploy
 
-`bun run build` produces a Cloudflare Workers bundle through Nitro, registered as the Worker
-`fasthand-studio` with a pinned `compatibility_date` so builds stay reproducible. Pushing to `main`
-deploys it. Change the `nitro({ preset })` entry in `vite.config.ts` for a different host. Define
-`GITHUB_TOKEN` in the target environment's secrets.
+`npm run build` pre-renders every route into `dist/client` as plain static HTML. Pushing to `main`
+runs `.github/workflows/deploy.yml`, which uploads that folder to GitHub Pages. No server runtime
+is involved: the Pages site serves the built files directly.
