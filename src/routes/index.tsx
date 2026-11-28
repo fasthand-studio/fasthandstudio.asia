@@ -3,7 +3,8 @@ import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { Suspense } from "react";
 import { getRepos, GITHUB_ORG, type Repo } from "@/lib/github.functions";
 import { PRODUCTS as CATALOG } from "@/components/product/catalog";
-import { BenchScene, SceneFigure } from "@/components/product/scenes";
+import { SceneFigure } from "@/components/product/scenes";
+import { StudioBeam } from "@/components/product/StudioBeam";
 import { TreeIcon, type TreeIconName } from "@/components/product/TreeIcon";
 import { ThemeToggle } from "@/components/product/ThemeToggle";
 
@@ -79,8 +80,8 @@ function Index() {
                 <GitIcon /> {GITHUB_ORG}
               </a>
             </div>
-            <SceneFigure caption="Figure 1. The bench, drawn rather than photographed: the organization feeds the product list, and the list below is read from it live rather than typed in by hand.">
-              <BenchScene />
+            <SceneFigure caption="Figure 1. The studio at the centre. Above it, the three tools it hosts for you; below it, the FastyBrowser app, the Plainspoken design system and the GitHub organization that feeds the list below. Each node is a link.">
+              <StudioBeam />
             </SceneFigure>
             <ProductsStrip />
             <Suspense fallback={<RepoSkeleton />}>

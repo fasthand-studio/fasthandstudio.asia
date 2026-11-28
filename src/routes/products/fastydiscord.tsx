@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CodeBlock } from "@/components/product/CodeBlock";
 import { DiagramCaption, ProductSection, StepList } from "@/components/product/ProductSection";
-import { RelayScene, SceneFigure } from "@/components/product/scenes";
+import { MobileFlow, RelayScene, SceneFigure } from "@/components/product/scenes";
 import { ProductHeader } from "@/components/product/ProductHeader";
 import { ProductEcosystemFooter } from "@/components/product/ProductEcosystemFooter";
 import { GitIcon, DownloadIcon } from "@/components/product/icons";
@@ -305,7 +305,7 @@ function Features() {
           </article>
         ))}
       </div>
-      <SceneFigure caption="Figure 1 — the arrangement this product assumes: events enter the relay as signed webhooks, no process waits on them, and the channel gets the message whether the desk is occupied or not.">
+      <SceneFigure until="lg" mobile={<MobileFlow label="GitHub event to Discord message" steps={[["GitHub sends a signed webhook","A push, pull request, release or issue."],["A serverless function relays it","No bot process runs; the function wakes for each event."],["Discord shows the message","It arrives whether or not anyone is at a desk."]]} />} caption="Figure 1 — the arrangement this product assumes: events enter the relay as signed webhooks, no process waits on them, and the channel gets the message whether the desk is occupied or not.">
         <RelayScene />
       </SceneFigure>
     </ProductSection>

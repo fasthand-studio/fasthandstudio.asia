@@ -4,11 +4,37 @@ import type { ReactNode } from "react";
  * Custom scene graphics: isometric plates, layered silhouettes and token colours
  * only — the black-and-white identity, drawn rather than photographed.
  */
-export function SceneFigure({ caption, children }: { caption: string; children: ReactNode }) {
+type Until = "md" | "lg";
+const SHOW_WIDE: Record<Until, string> = { md: "hidden md:block", lg: "hidden lg:block" };
+const SHOW_NARROW: Record<Until, string> = { md: "md:hidden", lg: "lg:hidden" };
+
+/**
+ * Wraps a drawn scene. Wide scenes carry labels drawn at 11–15px inside the viewBox, which
+ * shrink to nothing on a phone. Pass `mobile` (see MobileFlow) to swap in a stacked version
+ * below the breakpoint instead of making the reader pan sideways.
+ */
+export function SceneFigure({
+  caption,
+  children,
+  mobile,
+  until = "md",
+}: {
+  caption: string;
+  children: ReactNode;
+  mobile?: ReactNode;
+  until?: Until;
+}) {
   return (
     <figure className="surface mt-10 overflow-hidden">
       <div className="scene-frame overflow-x-auto bg-background/60 px-4 py-8 md:px-10 md:py-12">
-        {children}
+        {mobile ? (
+          <>
+            <div className={SHOW_NARROW[until]}>{mobile}</div>
+            <div className={SHOW_WIDE[until]}>{children}</div>
+          </>
+        ) : (
+          children
+        )}
       </div>
       <figcaption className="border-t border-border px-4 py-3 text-sm text-muted-foreground">
         {caption}
@@ -17,140 +43,29 @@ export function SceneFigure({ caption, children }: { caption: string; children: 
   );
 }
 
-/* ── Home · What's on the bench ─────────────────────────────────────────── */
-
-export function BenchScene() {
+/** A phone-sized scene: numbered boxes joined by a vertical line. Black and white, flat. */
+export function MobileFlow({ label, steps }: { label: string; steps: [string, string][] }) {
   return (
-    <svg
-      viewBox="0 0 1200 420"
-      role="img"
-      aria-labelledby="bench-title bench-desc"
-      className="mx-auto block h-auto w-full min-w-[900px] max-w-5xl text-foreground"
-    >
-      <title id="bench-title">The FastHand bench as an isometric diagram</title>
-      <desc id="bench-desc">
-        A GitHub organization plate feeds three product cards, which flow into a laptop on the
-        studio bench — the site's repository list drawn from the live organization.
-      </desc>
-      {/* github plate (bottom of the stack) */}
-      <g transform="translate(120 118)">
-        <rect
-          x="10"
-          y="10"
-          width="300"
-          height="188"
-          rx="22"
-          className="fill-foreground"
-          opacity="0.12"
-        />
-        <rect
-          x="4"
-          y="4"
-          width="300"
-          height="188"
-          rx="22"
-          className="fill-foreground"
-          opacity="0.22"
-        />
-        <rect
-          x="0"
-          y="0"
-          width="300"
-          height="188"
-          rx="22"
-          className="fill-card stroke-border"
-          strokeWidth="1.5"
-        />
-        <circle cx="40" cy="44" r="16" className="fill-none stroke-foreground" strokeWidth="1.5" />
-        <path
-          d="M34 46c1.5 4 4 6 6 6s4.5-2 6-6"
-          className="fill-none stroke-foreground"
-          strokeWidth="1.5"
-        />
-        <text x="68" y="49" className="fill-foreground font-mono text-[15px]">
-          FastHand-Studio
-        </text>
-        <text x="28" y="86" className="fill-muted-foreground font-mono text-[12px]">
-          github.com · public org
-        </text>
-        <g className="fill-none stroke-border" strokeWidth="1.5" strokeDasharray="3 5">
-          <path d="M28 110h244M28 132h244M28 154h170" />
-        </g>
-        <g className="fill-foreground">
-          <circle cx="244" cy="154" r="5" className="flow-ping" />
-        </g>
-        <text x="256" y="158" className="fill-muted-foreground font-mono text-[11px]">
-          live
-        </text>
-      </g>
-      {/* connector: plate to product cards */}
-      <path
-        d="M432 212 C 520 212, 560 210, 636 210"
-        className="flow-line fill-none stroke-foreground"
-        strokeWidth="1.5"
-        strokeDasharray="6 8"
-      />
-      <path d="M628 202 l14 8 -14 8 z" className="fill-foreground" />
-      {/* product card stack */}
-      <g transform="translate(648 92)">
-        {[
-          ["FastHand OCR", "printed text, from a photo"],
-          ["FastNotifications", "a socket per device"],
-          ["FastyDiscord", "GitHub, in your channel"],
-        ].map(([t, d], i) => (
-          <g key={t} transform={`translate(${i * 26} ${i * 84 - 26})`}>
-            <rect
-              x="0"
-              y="0"
-              width="356"
-              height="70"
-              rx="18"
-              className="fill-card stroke-border"
-              strokeWidth="1.5"
-            />
-            <rect x="14" y="14" width="6" height="42" rx="3" className="fill-foreground" />
-            <text x="36" y="32" className="fill-foreground font-mono text-[14px] font-semibold">
-              {t}
-            </text>
-            <text x="36" y="54" className="fill-muted-foreground text-[13px]">
+    <ol aria-label={label} className="mx-auto grid max-w-sm gap-0">
+      {steps.map(([t, d], i) => (
+        <li key={t} className="relative grid grid-cols-[32px_1fr] gap-3 pb-6 last:pb-0">
+          {i < steps.length - 1 && (
+            <span aria-hidden className="absolute top-8 bottom-0 left-4 w-px bg-border" />
+          )}
+          <span className="z-10 flex size-8 items-center justify-center rounded-full border border-foreground bg-background font-mono text-[13px]">
+            {i + 1}
+          </span>
+          <span className="pt-0.5">
+            <span className="block font-semibold">{t}</span>
+            <span className="mt-1 block text-[14px] leading-relaxed text-muted-foreground">
               {d}
-            </text>
-            <text x="322" y="32" className="fill-muted-foreground font-mono text-[11px]">
-              0{i + 1}
-            </text>
-          </g>
-        ))}
-      </g>
-      {/* laptop */}
-      <g transform="translate(80 258)">
-        <path d="M0 108 L214 108 L188 0 L26 0 Z" className="fill-foreground" opacity="0.15" />
-        <path
-          d="M6 100 L206 100 L184 8 L28 8 Z"
-          className="fill-card stroke-foreground"
-          strokeWidth="1.5"
-        />
-        <path d="M-18 128 L226 128 L206 100 L6 100 Z" className="fill-foreground" opacity="0.9" />
-        <g className="fill-background" opacity="0.5">
-          <rect x="10" y="106" width="192" height="8" rx="3" />
-        </g>
-        <g className="fill-none stroke-muted-foreground" strokeWidth="1.5">
-          <path d="M48 30h100M48 44h120M48 58h80M48 72h110" transform="skewX(-8)" />
-        </g>
-      </g>
-      <text
-        x="60"
-        y="410"
-        className="fill-muted-foreground font-mono text-[12px] uppercase tracking-wider"
-      >
-        the bench
-      </text>
-      <text x="1064" y="410" className="fill-muted-foreground font-mono text-[12px]">
-        fasthandstudio.asia
-      </text>
-    </svg>
+            </span>
+          </span>
+        </li>
+      ))}
+    </ol>
   );
 }
-
 /* ── FastHand OCR · the claim, drawn ────────────────────────────────────── */
 
 export function OcrNoticeScene() {
@@ -166,27 +81,8 @@ export function OcrNoticeScene() {
         A tilted paper notice with three type sizes; dashed recognition boxes surround the words and
         the far end of the sheet fades, standing in for a shallow depth of field.
       </desc>
-      <ellipse cx="260" cy="512" rx="190" ry="20" className="fill-foreground" opacity="0.06" />
       {/* paper thickness: offset stacked sheets */}
       <g transform="translate(96 66) rotate(-4)">
-        <rect
-          x="14"
-          y="14"
-          width="320"
-          height="420"
-          rx="10"
-          className="fill-foreground"
-          opacity="0.14"
-        />
-        <rect
-          x="7"
-          y="7"
-          width="320"
-          height="420"
-          rx="10"
-          className="fill-foreground"
-          opacity="0.26"
-        />
         <rect
           x="0"
           y="0"
@@ -256,15 +152,6 @@ export function OcrNoticeScene() {
       {/* response card floating off the sheet */}
       <g transform="translate(312 402) rotate(-4)">
         <rect
-          x="8"
-          y="8"
-          width="192"
-          height="96"
-          rx="14"
-          className="fill-foreground"
-          opacity="0.12"
-        />
-        <rect
           x="0"
           y="0"
           width="192"
@@ -302,20 +189,8 @@ export function PhoneQueueScene() {
         A flat-lying phone drawn in isometric view, its screen dark; above it a stack of message
         cards waits in order, the nearest one bright as it arrives.
       </desc>
-      <ellipse cx="392" cy="420" rx="300" ry="22" className="fill-foreground" opacity="0.05" />
-      {/* table plane */}
-      <path d="M120 388 L664 388 L604 316 L180 316 Z" className="fill-foreground" opacity="0.08" />
       {/* phone lying flat (skewed), kept fully inside the frame */}
       <g transform="translate(214 148) skewX(-30)">
-        <rect
-          x="12"
-          y="12"
-          width="150"
-          height="270"
-          rx="26"
-          className="fill-foreground"
-          opacity="0.18"
-        />
         <rect
           x="0"
           y="0"
@@ -345,15 +220,6 @@ export function PhoneQueueScene() {
           const near = i === 3;
           return (
             <g key={i} transform={`translate(${(3 - i) * -34} ${y})`}>
-              <rect
-                x="7"
-                y="7"
-                width="300"
-                height="64"
-                rx="16"
-                className="fill-foreground"
-                opacity={near ? "0.22" : "0.08"}
-              />
               <rect
                 x="0"
                 y="0"
@@ -499,15 +365,6 @@ export function SocketLineScene() {
       {/* phone node at the far end */}
       <g transform="translate(368 42)">
         <rect
-          x="6"
-          y="6"
-          width="64"
-          height="104"
-          rx="12"
-          className="fill-foreground"
-          opacity="0.14"
-        />
-        <rect
           x="0"
           y="0"
           width="64"
@@ -558,15 +415,6 @@ export function RelayScene() {
       {/* plate 1 — GitHub event */}
       <g transform="translate(96 112)">
         <rect
-          x="12"
-          y="12"
-          width="264"
-          height="176"
-          rx="24"
-          className="fill-foreground"
-          opacity="0.15"
-        />
-        <rect
           x="0"
           y="0"
           width="264"
@@ -597,7 +445,6 @@ export function RelayScene() {
       <path d="M470 192 l14 8 -14 8 z" className="fill-foreground" />
       {/* plate 2 — serverless, floating above a 24h dial */}
       <g transform="translate(492 96)">
-        <ellipse cx="140" cy="222" rx="120" ry="16" className="fill-foreground" opacity="0.08" />
         <circle
           cx="140"
           cy="216"
@@ -618,15 +465,6 @@ export function RelayScene() {
           <path d="M140 216 v-40" />
           <path d="M140 216 h26" />
         </g>
-        <rect
-          x="12"
-          y="12"
-          width="256"
-          height="120"
-          rx="22"
-          className="fill-foreground"
-          opacity="0.18"
-        />
         <rect
           x="0"
           y="0"
@@ -654,15 +492,6 @@ export function RelayScene() {
       <path d="M860 168 l14 8 -14 8 z" className="fill-foreground" />
       {/* plate 3 — Discord bubble */}
       <g transform="translate(884 96)">
-        <rect
-          x="12"
-          y="12"
-          width="180"
-          height="128"
-          rx="26"
-          className="fill-foreground"
-          opacity="0.15"
-        />
         <rect
           x="0"
           y="0"

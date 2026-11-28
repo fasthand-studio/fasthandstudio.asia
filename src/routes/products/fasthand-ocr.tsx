@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CodeBlock } from "@/components/product/CodeBlock";
 import { DiagramCaption, ProductSection, StepList } from "@/components/product/ProductSection";
-import { OcrNoticeScene, SceneFigure } from "@/components/product/scenes";
+import { MobileFlow, OcrNoticeScene, SceneFigure } from "@/components/product/scenes";
 import { ProductHeader } from "@/components/product/ProductHeader";
 import { ProductEcosystemFooter } from "@/components/product/ProductEcosystemFooter";
 import { GitIcon, DownloadIcon } from "@/components/product/icons";
@@ -268,7 +268,7 @@ function Features() {
           </article>
         ))}
       </div>
-      <SceneFigure caption="Figure 1 — the claim, drawn: a notice photographed at an angle, small Cyrillic print at three sizes, the far end falling out of focus. Dashed boxes are the endpoint's word regions; the response card is what comes back.">
+      <SceneFigure mobile={<MobileFlow label="From photo to text" steps={[["A photographed notice","Small print, three type sizes, shot at an angle."],["Words are boxed","The endpoint finds each word region, even where the far end loses focus."],["JSON comes back","The full text plus a confidence score for each word."]]} />} caption="Figure 1 — the claim, drawn: a notice photographed at an angle, small Cyrillic print at three sizes, the far end falling out of focus. Dashed boxes are the endpoint's word regions; the response card is what comes back.">
         <OcrNoticeScene />
       </SceneFigure>
     </ProductSection>

@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProductsIndexRouteImport } from './routes/products/index'
 import { Route as ProductsFasthandOcrRouteImport } from './routes/products/fasthand-ocr'
 import { Route as ProductsFastnotificationsRouteImport } from './routes/products/fastnotifications'
+import { Route as ProductsFastybrowserRouteImport } from './routes/products/fastybrowser'
 import { Route as ProductsFastydiscordRouteImport } from './routes/products/fastydiscord'
 
 const IndexRoute = IndexRouteImport.update({
@@ -36,6 +37,11 @@ const ProductsFastnotificationsRoute =
     path: '/products/fastnotifications',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ProductsFastybrowserRoute = ProductsFastybrowserRouteImport.update({
+  id: '/products/fastybrowser',
+  path: '/products/fastybrowser',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductsFastydiscordRoute = ProductsFastydiscordRouteImport.update({
   id: '/products/fastydiscord',
   path: '/products/fastydiscord',
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/products/fasthand-ocr': typeof ProductsFasthandOcrRoute
   '/products/fastnotifications': typeof ProductsFastnotificationsRoute
+  '/products/fastybrowser': typeof ProductsFastybrowserRoute
   '/products/fastydiscord': typeof ProductsFastydiscordRoute
   '/products/': typeof ProductsIndexRoute
 }
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/products/fasthand-ocr': typeof ProductsFasthandOcrRoute
   '/products/fastnotifications': typeof ProductsFastnotificationsRoute
+  '/products/fastybrowser': typeof ProductsFastybrowserRoute
   '/products/fastydiscord': typeof ProductsFastydiscordRoute
   '/products': typeof ProductsIndexRoute
 }
@@ -61,6 +69,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/products/fasthand-ocr': typeof ProductsFasthandOcrRoute
   '/products/fastnotifications': typeof ProductsFastnotificationsRoute
+  '/products/fastybrowser': typeof ProductsFastybrowserRoute
   '/products/fastydiscord': typeof ProductsFastydiscordRoute
   '/products/': typeof ProductsIndexRoute
 }
@@ -70,6 +79,7 @@ export interface FileRouteTypes {
     | '/'
     | '/products/fasthand-ocr'
     | '/products/fastnotifications'
+    | '/products/fastybrowser'
     | '/products/fastydiscord'
     | '/products/'
   fileRoutesByTo: FileRoutesByTo
@@ -77,6 +87,7 @@ export interface FileRouteTypes {
     | '/'
     | '/products/fasthand-ocr'
     | '/products/fastnotifications'
+    | '/products/fastybrowser'
     | '/products/fastydiscord'
     | '/products'
   id:
@@ -84,6 +95,7 @@ export interface FileRouteTypes {
     | '/'
     | '/products/fasthand-ocr'
     | '/products/fastnotifications'
+    | '/products/fastybrowser'
     | '/products/fastydiscord'
     | '/products/'
   fileRoutesById: FileRoutesById
@@ -92,6 +104,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ProductsFasthandOcrRoute: typeof ProductsFasthandOcrRoute
   ProductsFastnotificationsRoute: typeof ProductsFastnotificationsRoute
+  ProductsFastybrowserRoute: typeof ProductsFastybrowserRoute
   ProductsFastydiscordRoute: typeof ProductsFastydiscordRoute
   ProductsIndexRoute: typeof ProductsIndexRoute
 }
@@ -126,6 +139,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsFastnotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/products/fastybrowser': {
+      id: '/products/fastybrowser'
+      path: '/products/fastybrowser'
+      fullPath: '/products/fastybrowser'
+      preLoaderRoute: typeof ProductsFastybrowserRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/products/fastydiscord': {
       id: '/products/fastydiscord'
       path: '/products/fastydiscord'
@@ -140,6 +160,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ProductsFasthandOcrRoute: ProductsFasthandOcrRoute,
   ProductsFastnotificationsRoute: ProductsFastnotificationsRoute,
+  ProductsFastybrowserRoute: ProductsFastybrowserRoute,
   ProductsFastydiscordRoute: ProductsFastydiscordRoute,
   ProductsIndexRoute: ProductsIndexRoute,
 }

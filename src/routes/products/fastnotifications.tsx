@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { GITHUB_ORG } from "@/lib/github.functions";
 import { CodeBlock } from "@/components/product/CodeBlock";
-import { PhoneQueueScene, SceneFigure, SocketLineScene } from "@/components/product/scenes";
+import { MobileFlow, PhoneQueueScene, SceneFigure, SocketLineScene } from "@/components/product/scenes";
 import { Gloss, NextStep } from "@/components/product/gloss";
 import { ProductHeader } from "@/components/product/ProductHeader";
 import { ProductEcosystemFooter } from "@/components/product/ProductEcosystemFooter";
@@ -304,7 +304,7 @@ function Hero() {
 function OpeningScene() {
   return (
     <section aria-label="What this system is for" className="mx-auto max-w-6xl px-5 md:px-8">
-      <SceneFigure caption="Figure 1. A phone lying flat, screen dark, with its notifications held in order above it. Every guarantee below is about the messages that arrive while nobody is holding the device.">
+      <SceneFigure until="lg" mobile={<MobileFlow label="A notification reaching a sleeping phone" steps={[["A message is queued","It waits in order while the phone is dark and nobody is holding it."],["The socket opens","The phone wakes and connects; one request is all it takes."],["The queue drains","Waiting messages are delivered in the order they arrived."]]} />} caption="Figure 1. A phone lying flat, screen dark, with its notifications held in order above it. Every guarantee below is about the messages that arrive while nobody is holding the device.">
         <PhoneQueueScene />
       </SceneFigure>
     </section>

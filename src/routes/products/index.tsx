@@ -8,7 +8,7 @@ import { GITHUB_ORG } from "@/lib/github.functions";
 const ORIGIN = "https://fasthandstudio.asia";
 const TITLE = "Products | FastHand Studio";
 const DESCRIPTION =
-  "The open-source products from FastHand Studio: FastHand OCR, FastNotifications and FastyDiscord — self-hostable tools built on Cloudflare Workers, Vercel and Supabase.";
+  "The open-source products from FastHand Studio: FastHand OCR, FastNotifications, FastyDiscord and FastyBrowser — self-hostable tools and a native Linux browser.";
 
 export const Route = createFileRoute("/products/")({
   head: () => ({

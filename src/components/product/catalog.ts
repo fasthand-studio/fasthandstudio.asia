@@ -46,4 +46,15 @@ export const FASTYDISCORD: Product = {
   ready: true,
 };
 
-export const PRODUCTS: Product[] = [FASTHAND_OCR, FASTNOTIFICATIONS, FASTYDISCORD];
+export const FASTYBROWSER: Product = {
+  name: "FastyBrowser",
+  icon: "component",
+  href: "/products/fastybrowser",
+  pitch:
+    "A private, native Linux browser in Go on WebKitGTK: sleeping tabs, a built-in blocker, passkeys and no telemetry.",
+  repo: `https://github.com/${GITHUB_ORG}/FastyBrowser`,
+  zip: `https://github.com/${GITHUB_ORG}/FastyBrowser/archive/refs/heads/main.zip`,
+  ready: true,
+};
+
+export const PRODUCTS: Product[] = [FASTHAND_OCR, FASTNOTIFICATIONS, FASTYDISCORD, FASTYBROWSER];
