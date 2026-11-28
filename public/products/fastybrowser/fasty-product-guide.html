@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fasty Browser 1.1.1 — Product Guide</title>
+  <style>
+    :root {
+      --paper: #f5f4f1;
+      --ground: #ffffff;
+      --surface: #eeece7;
+      --ink: #171717;
+      --muted: #706c66;
+      --line: #dcd8d1;
+      --accent: #5301fe;
+      --green: #0a9809;
+      --dark: #171717;
+      --dark-surface: #242424;
+    }
+    * { box-sizing: border-box; }
+    @page { size: A4; margin: 0; }
+    html, body { margin: 0; padding: 0; background: #d8d5cf; }
+    body { color: var(--ink); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .page { position: relative; width: 210mm; height: 297mm; margin: 0 auto 8mm; padding: 18mm; overflow: hidden; background: var(--paper); break-after: page; page-break-after: always; }
+    .page:last-child { break-after: auto; page-break-after: auto; }
+    .page.dark { color: #ffffff; background: var(--dark); }
+    .page.white { background: #ffffff; }
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 13mm; }
+    .page-brand { display: flex; align-items: center; gap: 3mm; font-size: 10pt; font-weight: 700; }
+    .page-brand img { width: 9mm; height: 9mm; object-fit: contain; }
+    .page-brand span { color: var(--muted); font-size: 8pt; font-weight: 500; }
+    .dark .page-brand span { color: #aaa59e; }
+    .page-number { color: var(--muted); font-size: 8pt; font-variant-numeric: tabular-nums; }
+    .dark .page-number { color: #8f8a83; }
+    .page-footer { position: absolute; right: 18mm; bottom: 12mm; left: 18mm; display: flex; align-items: center; justify-content: space-between; padding-top: 4mm; border-top: 0.3mm solid var(--line); color: var(--muted); font-size: 7pt; }
+    .dark .page-footer { border-color: #343434; color: #77726c; }
+    .eyebrow { margin-bottom: 4mm; color: var(--accent); font-size: 8pt; font-weight: 750; letter-spacing: 0.14em; text-transform: uppercase; }
+    .dark .eyebrow { color: #a78aff; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 6mm; font-size: 42pt; font-weight: 730; letter-spacing: -0.055em; line-height: 0.98; }
+    h2 { margin-bottom: 5mm; font-size: 27pt; font-weight: 710; letter-spacing: -0.04em; line-height: 1.05; }
+    h3 { margin-bottom: 2.5mm; font-size: 12pt; font-weight: 680; letter-spacing: -0.02em; }
+    p, li { color: var(--muted); font-size: 10pt; line-height: 1.65; }
+    .dark p, .dark li { color: #aaa59e; }
+    .lead { max-width: 150mm; font-size: 13pt; line-height: 1.55; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6mm; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4mm; }
+    .card { padding: 6mm; border-radius: 5mm; background: var(--surface); }
+    .white .card { background: var(--paper); }
+    .dark .card { color: #ffffff; background: var(--dark-surface); }
+    .card p:last-child { margin-bottom: 0; }
+    .card-label { display: block; margin-bottom: 2mm; color: var(--muted); font-size: 7pt; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+    .dark .card-label { color: #8f8a83; }
+    .fact strong, .fact span { display: block; }
+    .fact strong { margin-bottom: 1.5mm; font-size: 11pt; font-weight: 670; }
+    .fact span { color: var(--muted); font-size: 8pt; line-height: 1.45; }
+    .dark .fact span { color: #aaa59e; }
+    .section { margin-top: 9mm; }
+    .section-title { margin-bottom: 4mm; font-size: 14pt; font-weight: 690; letter-spacing: -0.025em; }
+    .rule { height: 0.3mm; margin: 7mm 0; background: var(--line); }
+    .dark .rule { background: #343434; }
+    ul.clean { margin: 0; padding: 0; list-style: none; }
+    ul.clean li { position: relative; margin-bottom: 3mm; padding-left: 5mm; }
+    ul.clean li::before { position: absolute; top: 1.8mm; left: 0; width: 2mm; height: 2mm; border-radius: 50%; background: var(--green); content: ""; }
+    .note { padding: 4mm 5mm; border-radius: 4mm; color: #6c548f; background: #eee8f8; font-size: 8.5pt; line-height: 1.55; }
+    .dark .note { color: #c9b8eb; background: #2d253b; }
+    .warning { padding: 4mm 5mm; border-radius: 4mm; color: #7d642f; background: #f4ecd9; font-size: 8.5pt; line-height: 1.55; }
+    .dark .warning { color: #d9c38d; background: #332d20; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 3.2mm 2mm; border-bottom: 0.3mm solid var(--line); text-align: left; vertical-align: top; }
+    th { color: var(--muted); font-size: 7pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+    td { font-size: 8.5pt; line-height: 1.45; }
+    td strong { font-weight: 660; }
+    .status { display: inline-flex; align-items: center; gap: 1.5mm; color: var(--green); font-size: 7.5pt; font-weight: 650; }
+    .status::before { width: 1.6mm; height: 1.6mm; border-radius: 50%; background: currentColor; content: ""; }
+    .status.limited { color: #7651b5; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    pre { overflow: hidden; margin: 3mm 0 0; padding: 4mm; border-radius: 3mm; color: #d8d3cc; background: #202020; font-size: 7.6pt; line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
+    .package { min-height: 61mm; }
+    .package h3 { margin-bottom: 1.5mm; }
+    .package .file { min-height: 8mm; margin-bottom: 3mm; color: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 7.2pt; line-height: 1.45; overflow-wrap: anywhere; }
+    .package pre { padding: 3mm; font-size: 7pt; }
+    .checksum { margin-top: 3mm; color: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 6.5pt; line-height: 1.45; overflow-wrap: anywhere; }
+    .stack { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4mm; }
+    .stack-node { min-height: 31mm; padding: 5mm; border-radius: 4mm; background: var(--surface); }
+    .stack-node strong { display: block; margin-bottom: 1.5mm; font-size: 10pt; }
+    .stack-node span { color: var(--muted); font-size: 8pt; line-height: 1.45; }
+    .faq-item { padding: 4mm 0; border-bottom: 0.3mm solid var(--line); }
+    .faq-item:first-of-type { padding-top: 0; }
+    .faq-item h3 { margin-bottom: 1.5mm; font-size: 10pt; }
+    .faq-item p { margin-bottom: 0; font-size: 8.6pt; }
+    .resource-list { display: grid; gap: 3mm; }
+    .resource { display: flex; align-items: center; justify-content: space-between; gap: 5mm; padding: 4mm 5mm; border-radius: 4mm; background: var(--surface); }
+    .resource strong { font-size: 9pt; }
+    .resource span { color: var(--muted); font-size: 7.5pt; text-align: right; }
+    .cover-mark { width: 28mm; height: 28mm; margin-bottom: 13mm; object-fit: contain; }
+    .cover-version { display: inline-flex; margin-bottom: 8mm; align-items: center; gap: 2mm; color: #c9b8eb; font-size: 9pt; font-weight: 650; }
+    .cover-version::before { width: 2mm; height: 2mm; border-radius: 50%; background: #8bd78b; content: ""; }
+    .cover-line { width: 26mm; height: 1.2mm; margin: 9mm 0; background: var(--accent); }
+    .cover-bottom { position: absolute; right: 18mm; bottom: 24mm; left: 18mm; }
+    .cover-facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5mm; padding-top: 7mm; border-top: 0.3mm solid #343434; }
+    .cover-facts strong, .cover-facts span { display: block; }
+    .cover-facts strong { margin-bottom: 1.5mm; font-size: 10pt; }
+    .cover-facts span { color: #8f8a83; font-size: 7.5pt; }
+    .small { font-size: 8pt; }
+    .compact-page .section { margin-top: 6mm; }
+    .compact-page .resource { padding: 3mm 4mm; }
+    .mt-0 { margin-top: 0; }
+    .mb-0 { margin-bottom: 0; }
+    @media print {
+      html, body { background: #ffffff; }
+      .page { margin: 0; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <section class="page dark">
+    <div class="page-header"><div class="page-brand"><img src="fasty-logo.svg" alt="Fasty logo" /><span>FastHand Studio</span></div><div class="page-number">Product guide · 2026</div></div>
+    <img class="cover-mark" src="fasty-logo.svg" alt="Fasty Browser logo" />
+    <div class="cover-version">Version 1.1.1 · Linux x86_64</div>
+    <h1>Fasty<br />Browser</h1>
+    <div class="cover-line"></div>
+    <p class="lead">A native, private Linux browser built to stay out of the way.</p>
+    <p class="lead">This guide covers the product, verified release assets, installation, feature limits, privacy model, and open-source technology.</p>
+    <div class="cover-bottom">
+      <div class="cover-facts"><div><strong>Go</strong><span>Application language</span></div><div><strong>WebKitGTK 6.0</strong><span>System web engine</span></div><div><strong>MIT</strong><span>Open-source license</span></div><div><strong>24 Nov 2026</strong><span>Release date</span></div></div>
+    </div>
+  </section>
+
+  <section class="page white">
+    <div class="page-header"><div class="page-brand"><img src="fasty-logo.svg" alt="Fasty logo" />Fasty Browser<span>Product overview</span></div><div class="page-number">02</div></div>
+    <div class="eyebrow">Overview</div>
+    <h2>A small, fast, quiet browser.</h2>
+    <p class="lead">Fasty is a Linux web browser written in Go. It uses the system’s WebKitGTK 6.0 with GTK 4 and libadwaita rather than bundling Chromium or Electron.</p>
+    <div class="grid-4 section">
+      <div class="card fact"><strong>Linux</strong><span>Documented target platform</span></div>
+      <div class="card fact"><strong>x86_64</strong><span>Published 1.1.1 assets</span></div>
+      <div class="card fact"><strong>glibc 2.39+</strong><span>Documented baseline</span></div>
+      <div class="card fact"><strong>1.1.1</strong><span>Latest verified release</span></div>
+    </div>
+    <div class="section">
+      <div class="section-title">What Fasty is trying to do</div>
+      <div class="grid-2">
+        <div class="card"><h3>Stay native</h3><p>Use Linux browser and interface libraries directly, with a focused Go application managing tabs, settings, privacy, extensions, and local tools.</p></div>
+        <div class="card"><h3>Stay local</h3><p>Keep history, bookmarks, settings, sessions, passkeys, and authenticator data on the user’s machine. There is no account, sync service, or cloud backup.</p></div>
+        <div class="card"><h3>Stay quiet</h3><p>Sleep unused tabs, block common ads and trackers, and avoid telemetry, crash reporting, analytics, and remote configuration.</p></div>
+        <div class="card"><h3>Stay useful</h3><p>Include reader mode, find, downloads, PiP, extensions, passkeys, TOTP, and an opt-in agent interface for authorized testing.</p></div>
+      </div>
+    </div>
+    <div class="section note"><strong>Project maturity:</strong> Fasty is a young project. Site compatibility, extension APIs, passkeys, PiP, and package testing have documented limitations. Release notes report testing on Arch only.</div>
+    <div class="page-footer"><span>Fasty Browser 1.1.1 · Product guide</span><span>FastHand Studio · MIT License</span></div>
+  </section>
+
+  <section class="page">
+    <div class="page-header"><div class="page-brand"><img src="fasty-logo.svg" alt="Fasty logo" />Fasty Browser<span>Features & limits</span></div><div class="page-number">03</div></div>
+    <div class="eyebrow">Features</div>
+    <h2>Useful, with clear boundaries.</h2>
+    <table>
+      <thead><tr><th style="width: 31%">Feature</th><th style="width: 14%">Status</th><th>What to know</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Tab sleeping</strong></td><td><span class="status">Implemented</span></td><td>Idle tabs unload their WebKit process. Default sleep is five minutes; audio tabs stay awake.</td></tr>
+        <tr><td><strong>Built-in blocking</strong></td><td><span class="status">Implemented</span></td><td>Uses EasyList, EasyPrivacy, and StevenBlack hosts. YouTube ad handling is best effort, not guaranteed.</td></tr>
+        <tr><td><strong>Privacy controls</strong></td><td><span class="status">Implemented</span></td><td>Local data, private sessions, WebKit ITP, third-party-cookie rejection, clean links, and per-site permissions.</td></tr>
+        <tr><td><strong>Passkeys</strong></td><td><span class="status limited">Limited</span></td><td>ES256 only. No attestation, autofill prompts, USB security keys, sync, or phone/browser import.</td></tr>
+        <tr><td><strong>Authenticator</strong></td><td><span class="status limited">Limited</span></td><td>Encrypted TOTP vault with optional PIN, import, and export. No HOTP, Steam codes, or QR scanning.</td></tr>
+        <tr><td><strong>Picture in picture</strong></td><td><span class="status limited">Site dependent</span></td><td>Protected or cross-origin video may not be capturable; fallback modes may use another view or move the page.</td></tr>
+        <tr><td><strong>Extensions</strong></td><td><span class="status limited">Partial</span></td><td>WebExtension-style manager with store, direct URL, and local-file installation. Some APIs are unsupported.</td></tr>
+        <tr><td><strong>Agent control</strong></td><td><span class="status">Opt-in</span></td><td>Local Unix-socket API, off by default. Page fetch, XHR, and sendBeacon only; mandatory secret redaction.</td></tr>
+        <tr><td><strong>NVIDIA decoding</strong></td><td><span class="status limited">Experimental</span></td><td>Off by default. Requires supported NVIDIA hardware and packages; changes the web-process sandbox.</td></tr>
+      </tbody>
+    </table>
+    <div class="section warning"><strong>Performance claims:</strong> project measurements come from a specified test machine. They are not universal guarantees, and this guide does not turn them into marketing benchmarks.</div>
+    <div class="page-footer"><span>Fasty Browser 1.1.1 · Product guide</span><span>Feature status reflects repository documentation</span></div>
+  </section>
+
+  <section class="page white">
+    <div class="page-header"><div class="page-brand"><img src="fasty-logo.svg" alt="Fasty logo" />Fasty Browser<span>Download & install</span></div><div class="page-number">04</div></div>
+    <div class="eyebrow">Installation</div>
+    <h2>Choose your Linux package.</h2>
+    <p>All four assets below are published in the official 1.1.1 GitHub release for <strong>x86_64</strong>. Verify the SHA-256 digest before installation.</p>
+    <div class="grid-2 section">
+      <div class="card package"><h3>AppImage</h3><div class="file">Fasty-1.1.1-x86_64.AppImage · 9.83 MB</div><pre>chmod +x Fasty-1.1.1-x86_64.AppImage
+./Fasty-1.1.1-x86_64.AppImage</pre><div class="checksum">6239358c0643f817b88189da2ac6cbd0c0239c8d93ae3a68f89a50eb99d841dc</div><p class="small mt-0">Needs WebKitGTK 6.0, GTK 4, and libadwaita. Not self-contained.</p></div>
+      <div class="card package"><h3>Debian / Ubuntu</h3><div class="file">fasty-browser_1.1.1_amd64.deb · 10.1 MB</div><pre>sudo apt install ./fasty-browser_1.1.1_amd64.deb</pre><div class="checksum">08aa2050e519f56ebb1edbc973e14acf9cd3263573749d346ec1b4acb80e0a6b</div><p class="small mt-0">Documented baseline includes Ubuntu 24.04+ and Debian 13+.</p></div>
+      <div class="card package"><h3>Fedora / RPM</h3><div class="file">fasty-browser-1.1.1-1.x86_64.rpm · 10.4 MB</div><pre>sudo dnf install ./fasty-browser-1.1.1-1.x86_64.rpm</pre><div class="checksum">de52a87dd9be86afa2ab987dda17dc3ff9eef2719eecbd4ffbf8bd6e5d6afc5a</div><p class="small mt-0">H.264 may require RPM Fusion and libavcodec-freeworld.</p></div>
+      <div class="card package"><h3>Tarball</h3><div class="file">fasty-browser-1.1.1-linux-x86_64.tar.gz · 9.95 MB</div><pre>tar -xzf fasty-browser-1.1.1-linux-x86_64.tar.gz
+cd fasty-browser-1.1.1-linux-x86_64
+./install.sh</pre><div class="checksum">f53ef8a507312fc76967c6cf4e2f871a70eaedfd594ea2560c69b5ab0c00842f</div><p class="small mt-0">The installer checks libraries and can install missing packages with elevation.</p></div>
+    </div>
+    <div class="section"><div class="section-title">System baseline</div><p>glibc 2.39+; current Arch, Ubuntu 24.04+, Debian 13+, and Fedora 40+ are documented. Release testing was reported on Arch only. No Windows, macOS, or ARM64 binary is published.</p></div>
+    <div class="page-footer"><span>Fasty Browser 1.1.1 · Product guide</span><span>Official assets and checksums verified</span></div>
+  </section>
+
+  <section class="page dark">
+    <div class="page-header"><div class="page-brand"><img src="fasty-logo.svg" alt="Fasty logo" />Fasty Browser<span>Privacy & security</span></div><div class="page-number">05</div></div>
+    <div class="eyebrow">Privacy</div>
+    <h2>Local first. Not “offline.”</h2>
+    <p class="lead">Fasty is designed to keep browser data on your computer. Pages, search engines, extensions, and public filter-list downloads still use the network.</p>
+    <div class="grid-2 section">
+      <div class="card"><h3>Stays on your device</h3><ul class="clean"><li>History, bookmarks, settings, and sessions</li><li>Passkeys and authenticator vault data</li><li>Blocking rules and browser configuration</li></ul></div>
+      <div class="card"><h3>Not collected by Fasty</h3><ul class="clean"><li>No account or cloud sync</li><li>No telemetry or analytics</li><li>No crash reporting</li><li>No remote configuration</li></ul></div>
+    </div>
+    <div class="section">
+      <div class="section-title">Agent control: permission is the boundary</div>
+      <div class="card">
+        <ul class="clean"><li>The socket is off by default and lives at <code>$XDG_RUNTIME_DIR/fasty.sock</code> with mode 0600.</li><li>Any process running as the same user can control tabs while it is enabled.</li><li>Interception covers page-script fetch, XHR, and sendBeacon—not navigations, images, CSS, or plain form posts.</li><li>Replies and exports pass through mandatory secret redaction.</li><li>Use only on sites you own or are allowed to test, with test accounts and careful scope.</li></ul>
+      </div>
+    </div>
+    <div class="section note"><strong>Encrypted local storage:</strong> passkeys and authenticator secrets are encrypted. If libsecret is unavailable, Fasty uses a user-only key file instead of the system keyring.</div>
+    <div class="section warning"><strong>Do not overclaim:</strong> Fasty does not promise to make no network requests. Its own documented network activity is limited to public filter-list downloads; the web pages and extensions you use have their own requests.</div>
+    <div class="page-footer"><span>Fasty Browser 1.1.1 · Product guide</span><span>Authorized security testing only</span></div>
+  </section>
+
+  <section class="page">
+    <div class="page-header"><div class="page-brand"><img src="fasty-logo.svg" alt="Fasty logo" />Fasty Browser<span>Technology & license</span></div><div class="page-number">06</div></div>
+    <div class="eyebrow">Open source</div>
+    <h2>Built on the Linux stack.</h2>
+    <p class="lead">Fasty combines a Go application, native GTK interfaces, system WebKit, a Rust ad-blocking library, and optional native helpers.</p>
+    <div class="stack section">
+      <div class="stack-node"><strong>Go application</strong><span>Tabs, settings, privacy, extensions, agent API, and browser data. The module declares Go 1.27.4.</span></div>
+      <div class="stack-node"><strong>GTK 4 + libadwaita</strong><span>Native desktop controls and adaptive interface patterns through gotk4 bindings.</span></div>
+      <div class="stack-node"><strong>WebKitGTK 6.0</strong><span>System web rendering and web-platform APIs. Fasty does not bundle Chromium or Electron.</span></div>
+      <div class="stack-node"><strong>Rust ad-blocking</strong><span>fasty-adblock uses Brave’s adblock-rust 0.13.6 with content-blocking support.</span></div>
+    </div>
+    <div class="grid-2 section">
+      <div class="card"><h3>MIT License</h3><p>Fasty Browser is copyright 2026 FastHand Studio and released under the MIT License. The original logo and brand assets remain attributable to FastHand Studio.</p></div>
+      <div class="card"><h3>Third-party components</h3><p>Go, GTK, libadwaita, WebKitGTK, GStreamer, gotk4, x/crypto, adblock-rust, EasyList/EasyPrivacy, and StevenBlack hosts carry their own licenses. Do not describe every component as MIT.</p></div>
+    </div>
+    <div class="section"><div class="section-title">Source-build tools</div><p>Go, Rust/cargo, curl, python3, pkg-config, objcopy, GStreamer plugins, and native WebKitGTK development libraries are required. libsecret is optional for system-keyring storage. Source builds fetch Go modules and public filter lists.</p></div>
+    <div class="page-footer"><span>Fasty Browser 1.1.1 · Product guide</span><span>github.com/fasthand-studio/FastyBrowser</span></div>
+  </section>
+
+  <section class="page white">
+    <div class="page-header"><div class="page-brand"><img src="fasty-logo.svg" alt="Fasty logo" />Fasty Browser<span>Troubleshooting & FAQ</span></div><div class="page-number">07</div></div>
+    <div class="eyebrow">Help</div>
+    <h2>Start with the system.</h2>
+    <div class="faq-item"><h3>Fasty will not start or a library is missing</h3><p>Confirm WebKitGTK 6.0, GTK 4, libadwaita, libsoup 3, GObject Introspection, Graphene, the Vulkan loader, and GStreamer plugins are installed. Use the official installation guide for distribution-specific details.</p></div>
+    <div class="faq-item"><h3>H.264 video does not play</h3><p>Install the GStreamer libav and “bad” plugins for your distribution. Fedora may require RPM Fusion and libavcodec-freeworld.</p></div>
+    <div class="faq-item"><h3>A site behaves differently than in Chromium</h3><p>Fasty uses WebKitGTK, not Chromium. Some sites and browser APIs can behave differently. Check the project’s known-issues section and report a reproducible example.</p></div>
+    <div class="faq-item"><h3>An extension does not work</h3><p>Extension compatibility is partial. Unsupported APIs can include captureVisibleTab and push subscriptions. Check the extension’s required APIs before treating it as a Fasty bug.</p></div>
+    <div class="faq-item"><h3>Picture in picture falls back to another view</h3><p>Protected or cross-origin video may not be capturable. Fasty documents fallback modes that use another view or move the page.</p></div>
+    <div class="faq-item"><h3>Passkeys or authenticator import are unavailable</h3><p>Passkeys are ES256-only, without USB security keys, sync, or phone/browser import. The authenticator supports TOTP, not HOTP, Steam codes, or QR scanning.</p></div>
+    <div class="faq-item"><h3>Can I install on Windows, macOS, or ARM64?</h3><p>No such 1.1.1 asset is published, and the project does not document those platforms. Do not rename an x86_64 package or assume ARM64 compatibility.</p></div>
+    <div class="faq-item"><h3>How should I report a problem?</h3><p>Use the official GitHub issue tracker. Include distribution, architecture, package format, GTK/WebKitGTK versions, installation method, and clear reproduction steps.</p></div>
+    <div class="page-footer"><span>Fasty Browser 1.1.1 · Product guide</span><span>Official repository is the authoritative source</span></div>
+  </section>
+
+  <section class="page dark compact-page">
+    <div class="page-header"><div class="page-brand"><img src="fasty-logo.svg" alt="Fasty logo" />Fasty Browser<span>Release & resources</span></div><div class="page-number">08</div></div>
+    <div class="eyebrow">Verified release</div>
+    <h2>Fasty Browser 1.1.1.</h2>
+    <p class="lead">Published 24 November 2026. Seven GitHub assets: four Linux packages, SHA256SUMS, and source archives.</p>
+    <div class="section card">
+      <h3>Download page</h3>
+      <p class="mb-0">github.com/fasthand-studio/FastyBrowser/releases/tag/v1.1.1</p>
+    </div>
+    <div class="section"><div class="section-title">Official documentation</div><div class="resource-list">
+      <div class="resource"><strong>Installation</strong><span>/blob/main/docs/install.md</span></div>
+      <div class="resource"><strong>Features & limitations</strong><span>/blob/main/docs/features.md</span></div>
+      <div class="resource"><strong>Privacy & data</strong><span>/blob/main/docs/privacy.md</span></div>
+      <div class="resource"><strong>Blocking</strong><span>/blob/main/docs/blocking.md</span></div>
+      <div class="resource"><strong>Agent control</strong><span>/blob/main/docs/agent.md</span></div>
+    </div></div>
+    <div class="section"><div class="section-title">Before installing</div><ul class="clean"><li>Download from the official repository only.</li><li>Compare the selected asset with SHA256SUMS.</li><li>Confirm x86_64 architecture and glibc 2.39+.</li><li>Read the package-specific note and current README.</li><li>Use agent control only for sites you own or are allowed to test.</li></ul></div>
+    <div class="section note"><strong>Attribution:</strong> Fasty logo and brand assets © 2026 FastHand Studio. Used under the MIT License. This guide is a product presentation and does not replace the official documentation.</div>
+    <div class="page-footer"><span>Fasty Browser 1.1.1 · Product guide</span><span>No fabricated assets, versions, or support claims</span></div>
+  </section>
+</body>
+</html>

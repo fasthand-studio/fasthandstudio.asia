@@ -49,7 +49,7 @@ export const FASTYDISCORD: Product = {
 export const FASTYBROWSER: Product = {
   name: "FastyBrowser",
   icon: "component",
-  href: "/products/fastybrowser",
+  href: "/products/fastybrowser/",
   pitch:
     "A private, native Linux browser in Go on WebKitGTK: sleeping tabs, a built-in blocker, passkeys and no telemetry.",
   repo: `https://github.com/${GITHUB_ORG}/FastyBrowser`,

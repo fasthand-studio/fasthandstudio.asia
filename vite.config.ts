@@ -10,7 +10,14 @@ export default defineConfig({
     tsConfigPaths({ projects: ["./tsconfig.json"] }),
     // Pre-render every static route to HTML at build time: GitHub Pages hosts
     // files only, there is no Node runtime behind it.
-    tanstackStart({ server: { entry: "server" }, prerender: { enabled: true } }),
+    // /products/fastybrowser/ is a finished static site shipped from public/, not a route.
+    tanstackStart({
+      server: { entry: "server" },
+      prerender: {
+        enabled: true,
+        filter: (page: { path: string }) => !page.path.startsWith("/products/fastybrowser"),
+      },
+    }),
     viteReact(),
   ],
   css: { transformer: "lightningcss" },
