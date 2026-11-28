@@ -133,13 +133,24 @@ accessibility reasoning rules). Where they conflict, this file wins for this rep
 
 ## Dead links
 
-- `catalog.ts` is the only place product URLs are written. Its `ready` flag means
-  "a route file exists in this app". `ready: false` must render as text, never an
-  `<a href>` — the home strip and `ProductEcosystemFooter` both obey it.
+- Product URLs are written inline in the route that uses them (`REPO_URL`,
+  `ZIP_URL` in `src/routes/products/fastnotifications.tsx`). An unfinished
+  product must render as text, never an `<a href>`.
 - Before adding a link, confirm the route exists in `src/routeTree.gen.ts`.
 
 ## Changelog
 
+- 2026-11-28 (static deploy to GitHub Pages): the user ruled out Cloudflare — this
+  site deploys through GitHub Pages only. `vite.config.ts` dropped the nitro
+  `cloudflare-module` preset and turned on `prerender: { enabled: true }`, so
+  `npm run build` emits real HTML into `dist/client` (`/` and
+  `/products/fastnotifications`, autoSubfolderIndex). `.github/workflows/deploy.yml`
+  installs with bun (bun.lock is the lockfile; npm install crashes in CI), copies
+  `index.html` to `404.html` for the Pages fallback, and uploads `dist/client`.
+  Pages has the custom-404 toggle enabled; the site answers at
+  `https://fasthand-studio.github.io/fasthandstudio.asia/` while canonical URLs
+  stay `https://fasthandstudio.asia`. Anything that must appear on the deployed
+  site now has to exist at build time: no server functions, no request-time data.
 - 2026-11-27 (FastNotifications-only rebrand + phone pass): the site now presents
   a single product. `/` renders the FastNotifications page (also kept at
   `/products/fastnotifications`); the studio home, `/products` index, FastHand OCR
