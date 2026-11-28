@@ -19,12 +19,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      # bun.lock is the committed lockfile; npm has no lock here and chokes on install.
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: 22
-      # bun.lock is the committed lockfile; npm resolves fresh here.
-      - run: npm install --no-audit --no-fund
-      - run: npm run build
+          bun-version: latest
+      - run: bun install --no-frozen-lockfile
+      - run: bun run build
       # GitHub Pages serves files only: unknown paths fall back to this copy of
       # the home page, and the client router resolves or 404s from there.
       - run: cp dist/client/index.html dist/client/404.html
