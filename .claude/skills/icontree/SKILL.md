@@ -7,11 +7,11 @@ description: Add animated, recolorable Lottie icons to an app with IconTree (npm
 
 IconTree is one set of 946 animated Lottie icons published for three platforms. The icons are bundled in each package, so nothing is fetched at runtime and there is no REST API. Behavior is deliberately identical everywhere: same icon IDs, same four playback modes, same recolor rules.
 
-| Platform | Package | Install |
-|---|---|---|
-| React | `icon-tree-animate` (npm) | `npm install icon-tree-animate` |
-| Kotlin, Jetpack Compose | IconTreeKotlin (JitPack) | `implementation("com.github.HasibulHasan098:IconTreeKotlin:1.0.0")` plus `maven("https://jitpack.io")` |
-| Flutter | `icon_tree_animate` (pub.dev) | `flutter pub add icon_tree_animate` |
+| Platform                | Package                       | Install                                                                                                |
+| ----------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------ |
+| React                   | `icon-tree-animate` (npm)     | `npm install icon-tree-animate`                                                                        |
+| Kotlin, Jetpack Compose | IconTreeKotlin (JitPack)      | `implementation("com.github.HasibulHasan098:IconTreeKotlin:1.0.0")` plus `maven("https://jitpack.io")` |
+| Flutter                 | `icon_tree_animate` (pub.dev) | `flutter pub add icon_tree_animate`                                                                    |
 
 ## Workflow
 

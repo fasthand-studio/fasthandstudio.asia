@@ -16,11 +16,13 @@ accessibility reasoning rules). Where they conflict, this file wins for this rep
   `prefers-color-scheme` variants, ever. `color-scheme: light` on `:root` pins
   form controls and scrollbars to white even on a dark OS.
 - The header's "Dark mode" button is not a switch: it stays visible as a
-  courtesy and answers every click with one of three random witty refusals in a
-  `.theme-tease` bubble, while the in-house glyph carves a crescent and hands it
-  back (`data-declining`, ~0.85 s). Nothing it does touches the palette.
-- Depth is tokenised: `--shadow-1/2/3` are a soft monochrome cast, drawn from the
-  same ink as the palette.
+  courtesy and answers every click with a different short, witty refusal from a
+  rotating collection, in a `.theme-tease` bubble. The in-house glyph carves a
+  crescent and hands it back (`data-declining`, ~0.85 s). Nothing it does touches
+  the palette.
+- Surfaces stay flat. No card, popup, button, scene or UI primitive may use a
+  shadow, glow, blur, filter, ground ellipse or offset silhouette to fake depth.
+  Separate areas with spacing, hierarchy and solid off-colour fills only.
 - No gradients, no blurs, no new colours. The `grain` utility is dots only.
 
 ## Page anatomy
@@ -104,12 +106,12 @@ accessibility reasoning rules). Where they conflict, this file wins for this rep
   custom inline-SVG scenes in `src/components/product/scenes.tsx` (`SceneFigure`
   wraps them with the figure/caption rules). IconTree is an icon library only:
   never imitate its site, layouts or identity.
-- A scene must depict a claim the page already makes: isometric plates, layered
-  offset silhouettes and token classes only (`fill-card`, `stroke-border`,
-  `fill-foreground`, opacity steps — no gradients, no blur, chroma 0). Number
-  scenes and diagrams together in document order (`Figure 1 …`), keep the
+- A scene must depict a claim the page already makes: flat isometric forms and
+  token classes only (`fill-card`, `stroke-border`, `fill-foreground`, opacity
+  steps, no gradients, no blur, no shadow silhouettes, chroma 0). Number scenes
+  and diagrams together in document order (`Figure 1 ...`), keep the
   `role="img"` + `<title>`/`<desc>` contract, and let one meaningful motion per
-  scene carry the argument (flowing connector dashes, typing dots) — frozen under
+  scene carry the argument (flowing connector dashes, typing dots), frozen under
   `prefers-reduced-motion`.
 - Every scene carries a width floor and a ceiling, because its labels are drawn at
   11–15px _inside_ the viewBox and scale with it: a 1100-unit scene at `w-full` on
@@ -138,7 +140,34 @@ accessibility reasoning rules). Where they conflict, this file wins for this rep
 
 ## Changelog
 
-- 2026-11-27 (light-only): removed dark mode entirely — deleted `public/theme.js`
+- 2026-11-27 (FastNotifications-only rebrand + phone pass): the site now presents
+  a single product. `/` renders the FastNotifications page (also kept at
+  `/products/fastnotifications`); the studio home, `/products` index, FastHand OCR
+  and FastyDiscord routes, `catalog.ts`, `ProductSection.tsx` and
+  `ProductEcosystemFooter.tsx` were deleted and replaced by `ProductFooter.tsx`
+  (product-only closing band). Headers, title, meta, JSON-LD, humans.txt,
+  sitemap and manifest all say FastNotifications, never FastHand Studio. The
+  rules below about shared catalog/footer and multi-product anatomy are retired.
+  Same pass, phone + flat: every Tailwind shadow token (`--shadow-*`) is set to
+  `none` in `@theme inline` so no `shadow-*` utility can paint depth; `btn-44`
+  hover lift moved behind `@media (hover: hover)` with an `:active` press
+  settle and 48px coarse-pointer height; `btn-32` grows to 36px on coarse
+  pointers; sticky headers take `env(safe-area-inset-top)` under a
+  `.sticky-header` rule (mobile `--header-h` token drives `scroll-mt` and
+  `scroll-padding-top`); viewport meta gains `interactive-widget=resizes-content`;
+  tap highlight suppressed, horizontal scene pan gains touch-action/momentum,
+  `overscroll-behavior-y: none`, and the fixed scroll-progress element dropped
+  its `will-change`.
+- 2026-11-27 (PLAINspoken flat pass): removed every authored shadow token,
+  card/popup/button shadow and hover lift from the live stylesheet; flattened the
+  hand-drawn scenes by deleting ground ellipses and offset shadow silhouettes;
+  removed shadow utilities from the shared UI primitives; expanded the dark-mode
+  refusal into a shuffled, no-immediate-repeat collection with interaction tests;
+  rewrote rendered em dashes into natural punctuation and regenerated the share
+  artwork. Product section links now wait for `xl`, and `StepList` uses a
+  `minmax(0, 1fr)` track with wrapping so long commands cannot widen a phone.
+  No deployment, commit or push is part of this local pass.
+- 2026-11-27 (light-only): removed dark mode entirely, deleted `public/theme.js`
   and `src/components/product/theme.ts`, dropped the `/theme.js` script tag and
   `suppressHydrationWarning` from `__root.tsx` (nothing mutates `<html>` before
   hydration anymore), stripped every `.dark` / `prefers-color-scheme: dark` block

@@ -4,7 +4,7 @@ import { CodeBlock } from "@/components/product/CodeBlock";
 import { PhoneQueueScene, SceneFigure, SocketLineScene } from "@/components/product/scenes";
 import { Gloss, NextStep } from "@/components/product/gloss";
 import { ProductHeader } from "@/components/product/ProductHeader";
-import { ProductEcosystemFooter } from "@/components/product/ProductEcosystemFooter";
+import { ProductFooter } from "@/components/product/ProductFooter";
 import { GitIcon, DownloadIcon } from "@/components/product/icons";
 import { TreeIcon, type TreeIconName } from "@/components/product/TreeIcon";
 
@@ -14,7 +14,7 @@ const REPO_URL = `https://github.com/${GITHUB_ORG}/${REPO}`;
 const ZIP_URL = `${REPO_URL}/archive/refs/heads/main.zip`;
 const KOTLIN_URL = `${REPO_URL}/tree/main/test-app-kotlin`;
 
-const TITLE = "FastNotifications — self-hosted push notifications without Firebase";
+const TITLE = "FastNotifications: self-hosted push notifications without Firebase";
 const DESCRIPTION =
   "FastNotifications is an open-source push backend on Cloudflare Workers: WebSocket delivery through a per-user Durable Object, a D1 offline queue, and automatic cleanup on ACK.";
 
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/products/fastnotifications")({
       { title: TITLE },
       { name: "description", content: DESCRIPTION },
       { property: "og:type", content: "product" },
-      { property: "og:site_name", content: "FastHand Studio" },
+      { property: "og:site_name", content: "FastNotifications" },
       { property: "og:url", content: `${ORIGIN}/products/fastnotifications` },
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
@@ -48,8 +48,6 @@ export const Route = createFileRoute("/products/fastnotifications")({
           url: `${ORIGIN}/products/fastnotifications`,
           codeRepository: REPO_URL,
           license: "https://opensource.org/licenses/MIT",
-          isPartOf: { "@id": `${ORIGIN}/#website` },
-          publisher: { "@id": `${ORIGIN}/#organization` },
         }),
       },
     ],
@@ -228,7 +226,7 @@ npx wrangler d1 migrations apply notifications-db --remote
 npx wrangler secret put API_KEY
 npm run deploy`;
 
-function FastNotificationsPage() {
+export function FastNotificationsPage() {
   return (
     <div id="top" className="min-h-screen">
       <ProductHeader
@@ -252,7 +250,7 @@ function FastNotificationsPage() {
         <Download />
         <Stack />
       </main>
-      <ProductEcosystemFooter current="FastNotifications" />
+      <ProductFooter repoUrl={REPO_URL} zipUrl={ZIP_URL} />
     </div>
   );
 }
@@ -261,14 +259,14 @@ function Hero() {
   return (
     <section className="mx-auto grid max-w-6xl items-center gap-10 px-5 py-14 md:grid-cols-[1.1fr_1fr] md:px-8 md:py-24">
       <div>
-        <p className="font-mono text-sm text-muted-foreground">FastHand Studio · Product</p>
+        <p className="font-mono text-sm text-muted-foreground">Open source · Self-hosted</p>
         <h1 className="mt-3 text-4xl font-semibold leading-[1.08] tracking-tight md:text-[56px]">
           FastNotifications
         </h1>
         <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted-foreground md:text-xl">
           The normal way to notify a phone is a vendor service: an account, a project id, and a
           delivery path you cannot read or run yourself. FastNotifications replaces it with one
-          Cloudflare Worker — a Durable Object holds each user's socket open, a D1 table holds
+          Cloudflare Worker. A Durable Object holds each user's socket open, a D1 table holds
           anything sent while they are away, and the whole guarantee is code you can inspect.
         </p>
         <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
@@ -360,7 +358,7 @@ function Section({
   return (
     <section
       id={id}
-      className={`scroll-mt-16 border-t border-border ${tone === "muted" ? "bg-secondary" : ""}`}
+      className={`scroll-mt-[calc(var(--header-h)+28px)] border-t border-border ${tone === "muted" ? "bg-secondary" : ""}`}
     >
       <div className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
         <div className="max-w-2xl">
@@ -840,17 +838,17 @@ function Setup() {
       title="Six steps from a clone to a live endpoint"
       lead="No account signups and no external project to create. Every value below is a placeholder; your own database id and API key never go in the repository."
     >
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] lg:items-start">
-        <ol className="grid gap-3">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] lg:items-start">
+        <ol className="grid min-w-0 gap-3">
           {steps.map(([t, why], i) => (
             <li
               key={t}
-              className="grid grid-cols-[28px_1fr] items-start gap-3 border-b border-border py-3 first:border-t"
+              className="grid grid-cols-[28px_minmax(0,1fr)] items-start gap-3 border-b border-border py-3 first:border-t"
             >
               <span className="font-mono text-[13px] text-muted-foreground">{i + 1}</span>
-              <span>
-                <span className="block font-semibold text-foreground">{t}</span>
-                <span className="mt-1 block text-[14px] leading-relaxed text-muted-foreground">
+              <span className="min-w-0">
+                <span className="block break-words font-semibold text-foreground">{t}</span>
+                <span className="mt-1 block break-words text-[14px] leading-relaxed text-muted-foreground">
                   {why}
                 </span>
               </span>
@@ -953,11 +951,10 @@ function Stack() {
         ))}
       </dl>
       <p className="mt-8 max-w-2xl text-[15px] leading-relaxed text-muted-foreground">
-        MIT licensed, built by FastHand Studio. Bugs and pull requests go to the repository, not to
-        an inbox.
+        MIT licensed. Bugs and pull requests go to the repository, not to an inbox.
       </p>
-      <NextStep href="/products" action="Browse all products">
-        Next: the other things the studio has published, on the same stack and terms.
+      <NextStep href={REPO_URL} external action="Open the repository">
+        Next: the code, the issues, and the releases all live on GitHub.
       </NextStep>
     </Section>
   );

@@ -19,6 +19,7 @@ with bun and commit the lockfile whenever `package.json` changes:
 bun install
 bun run dev    # http://localhost:8080
 ```
+
 npm works too if you have to (`npm install --legacy-peer-deps` — npm 9's arborist dies on the peer
 set otherwise), but don't let it write a `package-lock.json`.
 
@@ -77,8 +78,8 @@ Cloudflare's, applied to everyone, and it clears at the next UTC day boundary.
 
 So the limits that matter live on the zone, where a rejection never reaches the Worker:
 
-- **One rate-limiting rule** (the free plan allows exactly one): *all requests, per Source IP, more
-  than 60 a minute → Block, 1 hour*. This is the limiter that actually blocks.
+- **One rate-limiting rule** (the free plan allows exactly one): _all requests, per Source IP, more
+  than 60 a minute → Block, 1 hour_. This is the limiter that actually blocks.
 - **IP Access Rules** for a named offender: Security → Events → the event → Block IP. Free, and it
   stops them at the edge rather than at the Worker.
 - **Under Attack mode** is the panic button. It challenges every visitor, so turn it on during a
@@ -106,4 +107,3 @@ rather than a second copy of the site.
 `fasthand-studio` with a pinned `compatibility_date` so builds stay reproducible. Pushing to `main`
 deploys it. Change the `nitro({ preset })` entry in `vite.config.ts` for a different host. Define
 `GITHUB_TOKEN` in the target environment's secrets.
-

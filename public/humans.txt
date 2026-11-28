@@ -1,14 +1,14 @@
-/* FASTHAND STUDIO */
+/* FASTNOTIFICATIONS */
 
-  Site:     FastHand Studio
+  Site:     FastNotifications
   URL:      https://fasthandstudio.asia
   Location: Bangladesh
-  Contact:  https://github.com/FastHand-Studio
+  Contact:  https://github.com/FastHand-Studio/FastNotifications
 
 /* TEAM */
 
-  Studio:   The people of FastHand Studio
-  GitHub:   https://github.com/FastHand-Studio
+  Author:   The FastNotifications maintainers
+  GitHub:   https://github.com/FastHand-Studio/FastNotifications
   Writing:  Hand-written, page copy and all
   Artwork:  The logo was drawn by hand on paper, then traced into SVG
 

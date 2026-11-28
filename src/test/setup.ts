@@ -20,6 +20,23 @@ Object.defineProperty(window, "scrollTo", {
   value: () => {},
 });
 
+// jsdom 20 ships no localStorage; the toggle must never store anything, so an
+// instrumented in-memory stub is enough to prove it does not.
+const fakeStorage = () => {
+  const map = new Map<string, string>();
+  return {
+    getItem: (k: string) => map.get(k) ?? null,
+    setItem: (k: string, v: string) => void map.set(k, v),
+    removeItem: (k: string) => void map.delete(k),
+    clear: () => map.clear(),
+    key: (i: number) => [...map.keys()][i] ?? null,
+    get length() {
+      return map.size;
+    },
+  };
+};
+Object.defineProperty(globalThis, "localStorage", { configurable: true, value: fakeStorage() });
+
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: (query: string) => ({

@@ -17,14 +17,25 @@ Made by Fasthand Studio. A 25-rule DO/DON'T design system for building interface
 
 ```css
 .btn {
-  display: inline-flex; align-items: center; gap: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   height: 32px;
-  border-radius: 16px;               /* half of 32px */
+  border-radius: 16px; /* half of 32px */
   corner-shape: superellipse(1.5);
-  font: 600 17px/1 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  border: 0; box-shadow: none;
+  font:
+    600 17px/1 system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  border: 0;
+  box-shadow: none;
 }
-.btn-cta { height: 44px; border-radius: 22px; } /* half of 44px */
+.btn-cta {
+  height: 44px;
+  border-radius: 22px;
+} /* half of 44px */
 ```
 
 ## DO

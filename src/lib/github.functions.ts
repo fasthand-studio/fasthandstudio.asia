@@ -36,19 +36,19 @@ async function fetchRepos(): Promise<{ repos: Repo[]; error: string | null }> {
     console.error(`GitHub request failed [${res.status}]: ${(await res.text()).slice(0, 200)}`);
     return { repos: [] as Repo[], error: `GitHub returned ${res.status}` };
   }
-  const data = (await res.json()) as any[];
+  const data = (await res.json()) as Record<string, unknown>[];
   const repos: Repo[] = data
-    .filter((r) => !r.private && !r.archived && !r.name.startsWith("."))
+    .filter((r) => !r["private"] && !r["archived"] && !String(r["name"]).startsWith("."))
     .map((r) => ({
-      id: r.id,
-      name: r.name,
-      description: r.description,
-      url: r.html_url,
-      language: r.language,
-      stars: r.stargazers_count,
-      forks: r.forks_count,
-      updatedAt: r.pushed_at ?? r.updated_at,
-      topics: r.topics ?? [],
+      id: Number(r["id"]),
+      name: String(r["name"]),
+      description: (r["description"] as string | null) ?? null,
+      url: String(r["html_url"]),
+      language: (r["language"] as string | null) ?? null,
+      stars: Number(r["stargazers_count"]),
+      forks: Number(r["forks_count"]),
+      updatedAt: String(r["pushed_at"] ?? r["updated_at"]),
+      topics: (r["topics"] as string[] | undefined) ?? [],
     }));
   return { repos, error: null as string | null };
 }

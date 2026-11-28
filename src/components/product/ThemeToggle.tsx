@@ -17,8 +17,33 @@ const RAYS = Array.from({ length: 8 }, (_, i) => {
 const ANSWERS = [
   "Dark mode isn't in our nature.",
   "We only ship in white. Nice try, though.",
-  "Paper and ink — that's the whole palette.",
+  "Paper and ink. That's the whole palette.",
+  "The dark side is taking the day off.",
+  "Our pixels prefer the daylight.",
+  "White is not a phase. It's the palette.",
+  "Sorry, the shadows are off duty.",
+  "We left the light on for you.",
+  "Dark looks lovely. Somewhere else.",
+  "This studio has a no-moonlight policy.",
+  "The white stays. The dark can wait.",
+  "Our cards are flat. Our theme is too.",
+  "Black ink, white page, zero plot twists.",
+  "The moon asked. We politely declined.",
+  "Dark mode has left the chat.",
+  "Bright idea. Wrong button, though.",
+  "We glow up by lighting up.",
+  "The light switch is purely decorative.",
 ];
+
+function shuffledAnswers(previous: number) {
+  const pool = ANSWERS.map((_, index) => index);
+  for (let index = pool.length - 1; index > 0; index -= 1) {
+    const swap = Math.floor(Math.random() * (index + 1));
+    [pool[index]!, pool[swap]!] = [pool[swap]!, pool[index]!];
+  }
+  if (pool[0] === previous) [pool[0]!, pool[1]!] = [pool[1]!, pool[0]!];
+  return pool;
+}
 
 const HIDE_AFTER = 3200;
 
@@ -66,6 +91,7 @@ export function ThemeToggle() {
   // answer is still on screen.
   const [beat, setBeat] = useState(0);
   const previous = useRef(-1);
+  const remaining = useRef<number[]>([]);
   const hide = useRef<number | undefined>(undefined);
   const restore = useRef<number | undefined>(undefined);
 
@@ -78,8 +104,11 @@ export function ThemeToggle() {
   );
 
   const decline = () => {
-    let pick = Math.floor(Math.random() * ANSWERS.length);
-    if (pick === previous.current) pick = (pick + 1) % ANSWERS.length;
+    if (remaining.current.length === 0) {
+      remaining.current = shuffledAnswers(previous.current);
+    }
+    const pick = remaining.current.shift();
+    if (pick === undefined) return;
     previous.current = pick;
 
     window.clearTimeout(hide.current);

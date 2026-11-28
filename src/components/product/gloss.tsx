@@ -8,7 +8,7 @@ export function Gloss({ term, note }: { term: string; note: string }) {
   return (
     <p className="mt-3 border-l-2 border-border pl-3 text-[13px] leading-relaxed text-muted-foreground">
       <dfn className="font-mono text-foreground">{term}</dfn>
-      <span aria-hidden> — </span>
+      <span aria-hidden>: </span>
       {note}
     </p>
   );
