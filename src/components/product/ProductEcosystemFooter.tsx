@@ -23,6 +23,14 @@ export function ProductEcosystemFooter({ current }: { current?: string }) {
           ))}
           <li>
             <EcosystemTile
+              href="https://fasthand-studio.github.io/FastyBrowser/"
+              title="FastyBrowser"
+              desc="A private, native Linux browser built on WebKitGTK."
+              external
+            />
+          </li>
+          <li>
+            <EcosystemTile
               href={`https://github.com/${GITHUB_ORG}`}
               title="GitHub"
               desc="Every repository, issues and pull requests."
