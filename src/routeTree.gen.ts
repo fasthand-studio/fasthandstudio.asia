@@ -10,11 +10,24 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProductsIndexRouteImport } from './routes/products/index'
+import { Route as ProductsFasthandOcrRouteImport } from './routes/products/fasthand-ocr'
 import { Route as ProductsFastnotificationsRouteImport } from './routes/products/fastnotifications'
+import { Route as ProductsFastydiscordRouteImport } from './routes/products/fastydiscord'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductsIndexRoute = ProductsIndexRouteImport.update({
+  id: '/products/',
+  path: '/products/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductsFasthandOcrRoute = ProductsFasthandOcrRouteImport.update({
+  id: '/products/fasthand-ocr',
+  path: '/products/fasthand-ocr',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProductsFastnotificationsRoute =
@@ -23,31 +36,64 @@ const ProductsFastnotificationsRoute =
     path: '/products/fastnotifications',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ProductsFastydiscordRoute = ProductsFastydiscordRouteImport.update({
+  id: '/products/fastydiscord',
+  path: '/products/fastydiscord',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/products/fasthand-ocr': typeof ProductsFasthandOcrRoute
   '/products/fastnotifications': typeof ProductsFastnotificationsRoute
+  '/products/fastydiscord': typeof ProductsFastydiscordRoute
+  '/products/': typeof ProductsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/products/fasthand-ocr': typeof ProductsFasthandOcrRoute
   '/products/fastnotifications': typeof ProductsFastnotificationsRoute
+  '/products/fastydiscord': typeof ProductsFastydiscordRoute
+  '/products': typeof ProductsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/products/fasthand-ocr': typeof ProductsFasthandOcrRoute
   '/products/fastnotifications': typeof ProductsFastnotificationsRoute
+  '/products/fastydiscord': typeof ProductsFastydiscordRoute
+  '/products/': typeof ProductsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/products/fastnotifications'
+  fullPaths:
+    | '/'
+    | '/products/fasthand-ocr'
+    | '/products/fastnotifications'
+    | '/products/fastydiscord'
+    | '/products/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/products/fastnotifications'
-  id: '__root__' | '/' | '/products/fastnotifications'
+  to:
+    | '/'
+    | '/products/fasthand-ocr'
+    | '/products/fastnotifications'
+    | '/products/fastydiscord'
+    | '/products'
+  id:
+    | '__root__'
+    | '/'
+    | '/products/fasthand-ocr'
+    | '/products/fastnotifications'
+    | '/products/fastydiscord'
+    | '/products/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ProductsFasthandOcrRoute: typeof ProductsFasthandOcrRoute
   ProductsFastnotificationsRoute: typeof ProductsFastnotificationsRoute
+  ProductsFastydiscordRoute: typeof ProductsFastydiscordRoute
+  ProductsIndexRoute: typeof ProductsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -59,6 +105,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/products/': {
+      id: '/products/'
+      path: '/products'
+      fullPath: '/products/'
+      preLoaderRoute: typeof ProductsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/products/fasthand-ocr': {
+      id: '/products/fasthand-ocr'
+      path: '/products/fasthand-ocr'
+      fullPath: '/products/fasthand-ocr'
+      preLoaderRoute: typeof ProductsFasthandOcrRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/products/fastnotifications': {
       id: '/products/fastnotifications'
       path: '/products/fastnotifications'
@@ -66,12 +126,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsFastnotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/products/fastydiscord': {
+      id: '/products/fastydiscord'
+      path: '/products/fastydiscord'
+      fullPath: '/products/fastydiscord'
+      preLoaderRoute: typeof ProductsFastydiscordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ProductsFasthandOcrRoute: ProductsFasthandOcrRoute,
   ProductsFastnotificationsRoute: ProductsFastnotificationsRoute,
+  ProductsFastydiscordRoute: ProductsFastydiscordRoute,
+  ProductsIndexRoute: ProductsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

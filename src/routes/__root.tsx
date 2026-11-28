@@ -71,10 +71,10 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 }
 
 const ORIGIN = "https://fasthandstudio.asia";
-const SITE_TITLE = "FastNotifications — self-hosted push notifications, no Firebase";
+const SITE_TITLE = "FastHand Studio | Open-Source Development Studio";
 const SITE_DESCRIPTION =
-  "FastNotifications is an open-source push backend on Cloudflare Workers: a WebSocket per device, a D1 offline queue, automatic cleanup on ACK, and a Kotlin reference client.";
-const SHARE_IMAGE_ALT = "FastNotifications — push notifications you host yourself";
+  "FastHand Studio is the development studio behind the FastHand ecosystem in Bangladesh — open-source tools, software and docs built in public on GitHub.";
+const SHARE_IMAGE_ALT = "FastHand Studio — the development studio behind FastHand";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
@@ -86,7 +86,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { title: SITE_TITLE },
       { name: "description", content: SITE_DESCRIPTION },
-      { name: "author", content: "FastNotifications" },
+      { name: "author", content: "FastHand Studio" },
       // The site has one palette, so this tag is written once and never retinted.
       { name: "theme-color", content: "#fbf9f5" },
       {
@@ -94,7 +94,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
       },
       { property: "og:type", content: "website" },
-      { property: "og:site_name", content: "FastNotifications" },
+      { property: "og:site_name", content: "FastHand Studio" },
       { property: "og:locale", content: "en_US" },
       { property: "og:url", content: `${ORIGIN}/` },
       { property: "og:title", content: SITE_TITLE },
@@ -113,18 +113,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@context": "https://schema.org",
           "@type": "Organization",
           "@id": `${ORIGIN}/#organization`,
-          name: "FastNotifications",
+          name: "FastHand Studio",
+          alternateName: "FastHand",
           url: `${ORIGIN}/`,
           description: SITE_DESCRIPTION,
           address: { "@type": "PostalAddress", addressCountry: "Bangladesh" },
-          sameAs: ["https://github.com/FastHand-Studio/FastNotifications"],
+          sameAs: ["https://github.com/FastHand-Studio"],
           logo: {
             "@type": "ImageObject",
             "@id": `${ORIGIN}/#logo`,
             url: `${ORIGIN}/logo-512.png`,
             width: 512,
             height: 512,
-            caption: "FastNotifications",
+            caption: "FastHand Studio",
           },
           image: { "@id": `${ORIGIN}/#logo` },
         },
@@ -135,7 +136,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@type": "WebSite",
           "@id": `${ORIGIN}/#website`,
           url: `${ORIGIN}/`,
-          name: "FastNotifications",
+          name: "FastHand Studio",
           description: SITE_DESCRIPTION,
           inLanguage: "en",
           publisher: { "@id": `${ORIGIN}/#organization` },

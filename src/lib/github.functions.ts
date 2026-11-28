@@ -1,5 +1,3 @@
-import { createServerFn } from "@tanstack/react-start";
-
 export const GITHUB_ORG = "FastHand-Studio";
 
 export type Repo = {
@@ -55,7 +53,9 @@ async function fetchRepos(): Promise<{ repos: Repo[]; error: string | null }> {
 
 // Unauthenticated GitHub traffic is capped at 60 requests/hour per egress IP, which a
 // shared host burns through quickly: cache successes and back off after failures.
-export const getRepos = createServerFn({ method: "GET" }).handler(async () => {
+// A plain async function, not a server fn: the site is pre-rendered to static HTML,
+// and a server fn cannot round-trip to itself during a build.
+export async function getRepos(): Promise<{ repos: Repo[]; error: string | null }> {
   const now = Date.now();
   if (good && now - good.at < OK_TTL) return { repos: good.repos, error: null };
   if (now - failedAt < FAIL_TTL) {
@@ -71,4 +71,4 @@ export const getRepos = createServerFn({ method: "GET" }).handler(async () => {
   }
   good = { at: now, repos: fresh.repos };
   return fresh;
-});
+}

@@ -1,7 +1,7 @@
 {
-  "name": "FastNotifications",
-  "short_name": "FastNotify",
-  "description": "Self-hosted push notifications on Cloudflare Workers: a WebSocket per device, a D1 offline queue, no Firebase.",
+  "name": "FastHand Studio",
+  "short_name": "Studio",
+  "description": "The open-source development studio behind the FastHand ecosystem.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

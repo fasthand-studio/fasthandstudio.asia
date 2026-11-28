@@ -4,7 +4,7 @@ import { CodeBlock } from "@/components/product/CodeBlock";
 import { PhoneQueueScene, SceneFigure, SocketLineScene } from "@/components/product/scenes";
 import { Gloss, NextStep } from "@/components/product/gloss";
 import { ProductHeader } from "@/components/product/ProductHeader";
-import { ProductFooter } from "@/components/product/ProductFooter";
+import { ProductEcosystemFooter } from "@/components/product/ProductEcosystemFooter";
 import { GitIcon, DownloadIcon } from "@/components/product/icons";
 import { TreeIcon, type TreeIconName } from "@/components/product/TreeIcon";
 
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/products/fastnotifications")({
       { title: TITLE },
       { name: "description", content: DESCRIPTION },
       { property: "og:type", content: "product" },
-      { property: "og:site_name", content: "FastNotifications" },
+      { property: "og:site_name", content: "FastHand Studio" },
       { property: "og:url", content: `${ORIGIN}/products/fastnotifications` },
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
@@ -45,6 +45,8 @@ export const Route = createFileRoute("/products/fastnotifications")({
           applicationCategory: "DeveloperApplication",
           operatingSystem: "Cloudflare Workers",
           description: DESCRIPTION,
+          isPartOf: { "@id": `${ORIGIN}/#website` },
+          publisher: { "@id": `${ORIGIN}/#organization` },
           url: `${ORIGIN}/products/fastnotifications`,
           codeRepository: REPO_URL,
           license: "https://opensource.org/licenses/MIT",
@@ -250,7 +252,7 @@ export function FastNotificationsPage() {
         <Download />
         <Stack />
       </main>
-      <ProductFooter repoUrl={REPO_URL} zipUrl={ZIP_URL} />
+      <ProductEcosystemFooter current="FastNotifications" />
     </div>
   );
 }
@@ -259,7 +261,7 @@ function Hero() {
   return (
     <section className="mx-auto grid max-w-6xl items-center gap-10 px-5 py-14 md:grid-cols-[1.1fr_1fr] md:px-8 md:py-24">
       <div>
-        <p className="font-mono text-sm text-muted-foreground">Open source · Self-hosted</p>
+        <p className="font-mono text-sm text-muted-foreground">FastHand Studio · Product</p>
         <h1 className="mt-3 text-4xl font-semibold leading-[1.08] tracking-tight md:text-[56px]">
           FastNotifications
         </h1>
@@ -951,10 +953,11 @@ function Stack() {
         ))}
       </dl>
       <p className="mt-8 max-w-2xl text-[15px] leading-relaxed text-muted-foreground">
-        MIT licensed. Bugs and pull requests go to the repository, not to an inbox.
+        MIT licensed, built by FastHand Studio. Bugs and pull requests go to the repository, not to
+        an inbox.
       </p>
-      <NextStep href={REPO_URL} external action="Open the repository">
-        Next: the code, the issues, and the releases all live on GitHub.
+      <NextStep href="/products" action="Browse all products">
+        Next: the other things the studio has published, on the same stack and terms.
       </NextStep>
     </Section>
   );
